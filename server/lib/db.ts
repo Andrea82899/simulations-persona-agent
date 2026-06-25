@@ -1,7 +1,7 @@
 import Database from 'better-sqlite3'
 import { mkdirSync } from 'node:fs'
 import { dirname, resolve } from 'node:path'
-import type { ChatMessage, PersonaProfile, SessionSummary, StoredSession } from '../../types/persona'
+import type { ChatMessage, CoachFeedback, PersonaProfile, SessionSummary, StoredSession } from '../../types/persona'
 
 let db: Database.Database | null = null
 
@@ -59,6 +59,16 @@ function migrate(database: Database.Database) {
       summary_json TEXT NOT NULL,
       created_at TEXT NOT NULL,
       FOREIGN KEY (session_id) REFERENCES sessions(id)
+    );
+
+    CREATE TABLE IF NOT EXISTS coach_feedback (
+      id INTEGER PRIMARY KEY AUTOINCREMENT,
+      session_id INTEGER NOT NULL,
+      user_message_id INTEGER NOT NULL UNIQUE,
+      feedback_json TEXT NOT NULL,
+      created_at TEXT NOT NULL,
+      FOREIGN KEY (session_id) REFERENCES sessions(id),
+      FOREIGN KEY (user_message_id) REFERENCES messages(id)
     );
   `)
 }
@@ -128,6 +138,18 @@ export function getSession(id: number): StoredSession {
     WHERE session_id = ?
   `).get(id) as any
 
+  const coachRows = database.prepare(`
+    SELECT
+      id,
+      session_id as sessionId,
+      user_message_id as userMessageId,
+      feedback_json as feedbackJson,
+      created_at as createdAt
+    FROM coach_feedback
+    WHERE session_id = ?
+    ORDER BY id ASC
+  `).all(id) as any[]
+
   return {
     id: session.id,
     scenario: session.scenario,
@@ -135,15 +157,33 @@ export function getSession(id: number): StoredSession {
     createdAt: session.createdAt,
     persona: JSON.parse(session.personaJson),
     messages,
+    coachFeedback: coachRows.map((row) => ({
+      id: row.id,
+      sessionId: row.sessionId,
+      userMessageId: row.userMessageId,
+      createdAt: row.createdAt,
+      ...JSON.parse(row.feedbackJson)
+    })),
     summary: summaryRow ? JSON.parse(summaryRow.summaryJson) : null
   }
 }
 
 export function addMessage(sessionId: number, role: 'user' | 'persona', content: string) {
-  getDb().prepare(`
+  const result = getDb().prepare(`
     INSERT INTO messages (session_id, role, content, created_at)
     VALUES (?, ?, ?, ?)
   `).run(sessionId, role, content, now())
+  return Number(result.lastInsertRowid)
+}
+
+export function saveCoachFeedback(sessionId: number, userMessageId: number, feedback: Omit<CoachFeedback, 'id' | 'sessionId' | 'userMessageId' | 'createdAt'>) {
+  getDb().prepare(`
+    INSERT INTO coach_feedback (session_id, user_message_id, feedback_json, created_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(user_message_id) DO UPDATE SET
+      feedback_json = excluded.feedback_json,
+      created_at = excluded.created_at
+  `).run(sessionId, userMessageId, JSON.stringify(feedback), now())
 }
 
 export function saveSummary(sessionId: number, summary: SessionSummary) {

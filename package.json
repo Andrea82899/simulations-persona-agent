@@ -9,11 +9,23 @@
     "preview": "NUXT_TELEMETRY_DISABLED=1 nuxt preview",
     "serve": "HOST=127.0.0.1 PORT=3000 node .output/server/index.mjs",
     "test": "vitest run",
-    "typecheck": "nuxt typecheck"
+    "typecheck": "nuxt typecheck",
+    "check": "npm run test && npm run typecheck"
   },
-  "keywords": [],
-  "author": "",
-  "license": "UNLICENSED",
+  "keywords": [
+    "nuxt",
+    "ollama",
+    "sqlite",
+    "persona",
+    "simulation",
+    "leadership-training",
+    "interventionstechniken"
+  ],
+  "author": "Andrea Koch",
+  "license": "MIT",
+  "engines": {
+    "node": ">=22"
+  },
   "dependencies": {
     "better-sqlite3": "^12.11.1",
     "nuxt": "^4.4.8",

@@ -13,6 +13,8 @@ export type SessionSummary = {
   objections: string[]
   patterns: string[]
   recommendations: string[]
+  teamLearning?: string[]
+  practiceSentences?: string[]
 }
 
 export type ChatRole = 'user' | 'persona'
@@ -25,6 +27,17 @@ export type ChatMessage = {
   createdAt: string
 }
 
+export type CoachFeedback = {
+  id: number
+  sessionId: number
+  userMessageId: number
+  effect: string
+  technique: string
+  improvement: string
+  alternative: string
+  createdAt: string
+}
+
 export type StoredSession = {
   id: number
   scenario: string
@@ -32,5 +45,6 @@ export type StoredSession = {
   createdAt: string
   persona: PersonaProfile
   messages: ChatMessage[]
+  coachFeedback: CoachFeedback[]
   summary: SessionSummary | null
 }

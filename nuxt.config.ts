@@ -4,7 +4,7 @@ export default defineNuxtConfig({
   css: ['~/assets/css/main.css'],
   runtimeConfig: {
     ollamaHost: process.env.OLLAMA_HOST || 'http://localhost:11434',
-    ollamaModel: process.env.OLLAMA_MODEL || 'llama3.1:8b',
+    ollamaModel: process.env.OLLAMA_MODEL || 'llama3.2:3b',
     databasePath: process.env.DATABASE_PATH || './data/persona-agent.sqlite'
   },
   nitro: {

@@ -14,7 +14,16 @@ export const SummarySchema = z.object({
   needs: z.array(z.string().min(1)).min(1),
   objections: z.array(z.string().min(1)).min(1),
   patterns: z.array(z.string().min(1)).min(1),
-  recommendations: z.array(z.string().min(1)).min(1)
+  recommendations: z.array(z.string().min(1)).min(1),
+  teamLearning: z.array(z.string().min(1)).optional(),
+  practiceSentences: z.array(z.string().min(1)).optional()
+})
+
+export const CoachFeedbackSchema = z.object({
+  effect: z.string().min(1),
+  technique: z.string().min(1),
+  improvement: z.string().min(1),
+  alternative: z.string().min(1)
 })
 
 export const PersonaInputSchema = z.object({
