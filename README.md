@@ -18,9 +18,9 @@ Die App laeuft lokal. Standardmaessig werden keine Daten an Cloud-Dienste gesend
 
 - Feste Simulationspersonas wie Rajani, Luca, Bernd, Sasha, Miriam und Finn
 - Trainingsfokus und Schwierigkeitsgrad
-- Szenario-Vorlagen fuer Projektmeeting, Feedbackgespraech, Veraenderung und Steering Committee
+- Trainingskarten fuer Meeting, Feedback, Widerstand, Stille, Konflikt, Verbindlichkeit und Entscheidung
 - Freier Persona-Chat
-- Coach-Feedback nach jeder Antwort
+- Coach-Feedback automatisch nach 10 Interaktionen oder jederzeit auf Nachfrage
 - Feld zum Ueben einer verbesserten Antwort
 - Formulierungsbibliothek
 - SQLite-Speicherung von Sessions, Chatverlauf, Feedback und Zusammenfassungen

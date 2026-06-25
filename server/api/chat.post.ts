@@ -1,11 +1,10 @@
-import { addMessage, getSession, saveCoachFeedback } from '../lib/db'
+import { getSession, saveChatTurn } from '../lib/db'
 import { generateCoachFeedback, generatePersonaReply } from '../lib/ollama'
 import { ChatInputSchema } from '../lib/schemas'
 
 export default defineEventHandler(async (event) => {
   const input = ChatInputSchema.parse(await readBody(event))
   const sessionBefore = getSession(input.sessionId)
-  const userMessageId = addMessage(input.sessionId, 'user', input.message)
   const userInteractionCount = sessionBefore.messages.filter((message) => message.role === 'user').length + 1
   const shouldGenerateCoachFeedback = Boolean(input.requestCoach) || userInteractionCount % 10 === 0
 
@@ -17,17 +16,27 @@ export default defineEventHandler(async (event) => {
     userMessage: input.message
   })
 
-  addMessage(input.sessionId, 'persona', reply)
+  let coachFeedback = null
   if (shouldGenerateCoachFeedback) {
-    const coachFeedback = await generateCoachFeedback({
-      scenario: sessionBefore.scenario,
-      targetAudience: sessionBefore.targetAudience,
-      persona: sessionBefore.persona,
-      messages: sessionBefore.messages,
-      userMessage: input.message
-    })
-    saveCoachFeedback(input.sessionId, userMessageId, coachFeedback)
+    try {
+      coachFeedback = await generateCoachFeedback({
+        scenario: sessionBefore.scenario,
+        targetAudience: sessionBefore.targetAudience,
+        persona: sessionBefore.persona,
+        messages: sessionBefore.messages,
+        userMessage: input.message
+      })
+    } catch {
+      coachFeedback = null
+    }
   }
+
+  saveChatTurn({
+    sessionId: input.sessionId,
+    userMessage: input.message,
+    personaReply: reply,
+    coachFeedback
+  })
 
   return getSession(input.sessionId)
 })

@@ -176,6 +176,39 @@ export function addMessage(sessionId: number, role: 'user' | 'persona', content:
   return Number(result.lastInsertRowid)
 }
 
+export function saveChatTurn(input: {
+  sessionId: number
+  userMessage: string
+  personaReply: string
+  coachFeedback?: Omit<CoachFeedback, 'id' | 'sessionId' | 'userMessageId' | 'createdAt'> | null
+}) {
+  const database = getDb()
+  const insertMessage = database.prepare(`
+    INSERT INTO messages (session_id, role, content, created_at)
+    VALUES (?, ?, ?, ?)
+  `)
+  const insertFeedback = database.prepare(`
+    INSERT INTO coach_feedback (session_id, user_message_id, feedback_json, created_at)
+    VALUES (?, ?, ?, ?)
+    ON CONFLICT(user_message_id) DO UPDATE SET
+      feedback_json = excluded.feedback_json,
+      created_at = excluded.created_at
+  `)
+
+  return database.transaction(() => {
+    const createdAt = now()
+    const userResult = insertMessage.run(input.sessionId, 'user', input.userMessage, createdAt)
+    insertMessage.run(input.sessionId, 'persona', input.personaReply, createdAt)
+    const userMessageId = Number(userResult.lastInsertRowid)
+
+    if (input.coachFeedback) {
+      insertFeedback.run(input.sessionId, userMessageId, JSON.stringify(input.coachFeedback), createdAt)
+    }
+
+    return userMessageId
+  })()
+}
+
 export function saveCoachFeedback(sessionId: number, userMessageId: number, feedback: Omit<CoachFeedback, 'id' | 'sessionId' | 'userMessageId' | 'createdAt'>) {
   getDb().prepare(`
     INSERT INTO coach_feedback (session_id, user_message_id, feedback_json, created_at)
