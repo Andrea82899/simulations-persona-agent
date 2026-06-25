@@ -15,25 +15,9 @@ const searchQuery = shallowRef('')
 const showAllSessions = shallowRef(false)
 const visibleLimit = 6
 
-const filteredSessions = computed(() => {
-  const query = searchQuery.value.trim().toLowerCase()
-
-  if (!query) return props.sessions
-
-  return props.sessions.filter((item) => {
-    return [
-      item.personaName,
-      item.scenario,
-      item.targetAudience
-    ].some((value) => value.toLowerCase().includes(query))
-  })
-})
-
-const visibleSessions = computed(() => {
-  if (showAllSessions.value) return filteredSessions.value
-  return filteredSessions.value.slice(0, visibleLimit)
-})
-
+const filteredSessions = computed(() => filterSessionsByQuery(props.sessions, searchQuery.value))
+const visibleSessions = computed(() => limitSessions(filteredSessions.value, showAllSessions.value, visibleLimit))
+const groupedVisibleSessions = computed(() => groupSessionsByPersona(visibleSessions.value))
 const hiddenSessionCount = computed(() => Math.max(filteredSessions.value.length - visibleSessions.value.length, 0))
 </script>
 
@@ -63,16 +47,22 @@ const hiddenSessionCount = computed(() => Math.max(filteredSessions.value.length
           @input="showAllSessions = false"
         >
       </label>
-      <button
-        v-for="item in visibleSessions"
-        :key="item.id"
-        class="history-item"
-        :class="{ active: currentSessionId === item.id }"
-        @click="emit('open', item.id)"
-      >
-        <strong>{{ item.personaName }}</strong>
-        <span>{{ item.scenario }}</span>
-      </button>
+      <section v-for="group in groupedVisibleSessions" :key="group.personaName" class="history-persona-group">
+        <h3>
+          <span>{{ group.personaName }}</span>
+          <small>{{ group.sessions.length }}</small>
+        </h3>
+        <button
+          v-for="item in group.sessions"
+          :key="item.id"
+          class="history-item"
+          :class="{ active: currentSessionId === item.id }"
+          @click="emit('open', item.id)"
+        >
+          <strong>{{ item.scenario }}</strong>
+          <span>{{ item.targetAudience }}</span>
+        </button>
+      </section>
       <p v-if="sessions.length === 0" class="muted">
         Noch keine gespeicherten Simulationen.
       </p>

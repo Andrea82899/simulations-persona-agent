@@ -184,6 +184,38 @@ h3 {
   color: var(--ink);
 }
 
+.history-persona-group {
+  display: grid;
+  gap: 8px;
+  padding-top: 4px;
+}
+
+.history-persona-group + .history-persona-group {
+  padding-top: 12px;
+  border-top: 1px solid var(--line);
+}
+
+.history-persona-group h3 {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  margin: 0;
+  color: var(--ink);
+  font-size: 0.92rem;
+}
+
+.history-persona-group h3 small {
+  min-width: 24px;
+  padding: 2px 7px;
+  color: var(--muted);
+  background: var(--panel);
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 0.72rem;
+  text-align: center;
+}
+
 .history-item {
   display: grid;
   gap: 4px;
@@ -204,6 +236,7 @@ h3 {
 
 .history-item span {
   color: var(--muted);
+  font-size: 0.86rem;
   display: -webkit-box;
   overflow: hidden;
   -webkit-box-orient: vertical;
