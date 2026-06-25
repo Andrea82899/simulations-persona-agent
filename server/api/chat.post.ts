@@ -6,6 +6,8 @@ export default defineEventHandler(async (event) => {
   const input = ChatInputSchema.parse(await readBody(event))
   const sessionBefore = getSession(input.sessionId)
   const userMessageId = addMessage(input.sessionId, 'user', input.message)
+  const userInteractionCount = sessionBefore.messages.filter((message) => message.role === 'user').length + 1
+  const shouldGenerateCoachFeedback = Boolean(input.requestCoach) || userInteractionCount % 10 === 0
 
   const reply = await generatePersonaReply({
     scenario: sessionBefore.scenario,
@@ -16,14 +18,16 @@ export default defineEventHandler(async (event) => {
   })
 
   addMessage(input.sessionId, 'persona', reply)
-  const coachFeedback = await generateCoachFeedback({
-    scenario: sessionBefore.scenario,
-    targetAudience: sessionBefore.targetAudience,
-    persona: sessionBefore.persona,
-    messages: sessionBefore.messages,
-    userMessage: input.message
-  })
-  saveCoachFeedback(input.sessionId, userMessageId, coachFeedback)
+  if (shouldGenerateCoachFeedback) {
+    const coachFeedback = await generateCoachFeedback({
+      scenario: sessionBefore.scenario,
+      targetAudience: sessionBefore.targetAudience,
+      persona: sessionBefore.persona,
+      messages: sessionBefore.messages,
+      userMessage: input.message
+    })
+    saveCoachFeedback(input.sessionId, userMessageId, coachFeedback)
+  }
 
   return getSession(input.sessionId)
 })

@@ -152,6 +152,8 @@ export async function generatePersonaReply(params: {
         'Wenn in der Persona ein Muster, ein typischer Satz oder ein Übungsfeld beschrieben ist, zeige dieses Verhalten natürlich im Gespräch, ohne das Muster oder Übungsfeld zu benennen.',
         'Bleibe trainingsrealistisch: herausfordernd genug zum Üben, aber nicht karikierend.',
         'Antworte natürlich, konkret und aus der Ich-Perspektive der Persona.',
+        'Halte deine Antwort deutlich kurz: maximal 1 bis 3 Sätze, keine langen Erklärungen.',
+        'Stelle höchstens eine kurze Rückfrage.',
         'Dein Ton strahlt Swissness aus: ruhig, verbindlich, qualitätsbewusst, pragmatisch und lösungsorientiert.',
         'Schreibe in Schweizer Hochdeutsch mit ss statt ß.',
         'Vermeide problemfixierte oder dramatisierende Wörter wie Überforderung, überfordert, Chaos, Verwirrung, Krise, Angst, Scheitern oder Schmerz.',
@@ -163,7 +165,7 @@ export async function generatePersonaReply(params: {
     },
     ...history,
     { role: 'user', content: params.userMessage }
-  ], { temperature: 0.7, numPredict: 260, timeoutMs: 90000 })
+  ], { temperature: 0.7, numPredict: 120, timeoutMs: 90000 })
 
   return swissSolutionText(reply)
 }

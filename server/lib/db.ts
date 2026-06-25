@@ -186,6 +186,13 @@ export function saveCoachFeedback(sessionId: number, userMessageId: number, feed
   `).run(sessionId, userMessageId, JSON.stringify(feedback), now())
 }
 
+export function deleteCoachFeedback(sessionId: number, userMessageId: number) {
+  getDb().prepare(`
+    DELETE FROM coach_feedback
+    WHERE session_id = ? AND user_message_id = ?
+  `).run(sessionId, userMessageId)
+}
+
 export function saveSummary(sessionId: number, summary: SessionSummary) {
   getDb().prepare(`
     INSERT INTO summaries (session_id, summary_json, created_at)

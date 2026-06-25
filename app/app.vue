@@ -220,6 +220,12 @@ const templates: SimulationTemplate[] = [
 
 const persona = computed(() => currentSession.value?.persona || null)
 const messages = computed(() => currentSession.value?.messages || [])
+const userMessageCount = computed(() => messages.value.filter((message) => message.role === 'user').length)
+const nextAutoFeedbackIn = computed(() => {
+  if (!persona.value) return 10
+  const rest = userMessageCount.value % 10
+  return rest === 0 ? 10 : 10 - rest
+})
 const coachFeedbackByMessageId = computed(() => {
   return Object.fromEntries(
     (currentSession.value?.coachFeedback || []).map((feedback) => [feedback.userMessageId, feedback])
@@ -229,7 +235,7 @@ const summary = computed(() => currentSession.value?.summary || null)
 const pendingLabel = computed(() => {
   if (!pending.value) return ''
   if (!persona.value) return 'Das lokale Modell erzeugt eine neue Persona.'
-  return 'Die Persona antwortet und der Trainingscoach gibt Feedback.'
+  return 'Die Persona antwortet kurz.'
 })
 
 async function loadSessions() {
@@ -332,6 +338,22 @@ async function sendMessage() {
   } catch (error: any) {
     chatMessage.value = message
     errorMessage.value = error?.statusMessage || error?.message || 'Die Persona konnte nicht antworten.'
+  } finally {
+    pending.value = false
+  }
+}
+
+async function requestCoachFeedback() {
+  if (!currentSession.value || userMessageCount.value === 0) return
+
+  errorMessage.value = ''
+  pending.value = true
+  try {
+    currentSession.value = await $fetch<StoredSession>(`/api/sessions/${currentSession.value.id}/coach`, {
+      method: 'POST'
+    })
+  } catch (error: any) {
+    errorMessage.value = error?.statusMessage || error?.message || 'Das Coach-Feedback konnte nicht erzeugt werden.'
   } finally {
     pending.value = false
   }
@@ -526,10 +548,19 @@ onMounted(loadSessions)
               <div>
                 <p class="eyebrow">Freier Chat</p>
                 <h2>Simulation</h2>
+                <p class="muted small-note">
+                  Coach-Feedback automatisch nach 10 Antworten oder jederzeit auf Nachfrage.
+                  Nächster Auto-Impuls in {{ nextAutoFeedbackIn }}.
+                </p>
               </div>
-              <button class="secondary" :disabled="pending || messages.length === 0" @click="createSummary">
-                Zusammenfassen
-              </button>
+              <div class="chat-actions">
+                <button class="secondary" :disabled="pending || userMessageCount === 0" @click="requestCoachFeedback">
+                  Coach-Feedback
+                </button>
+                <button class="secondary" :disabled="pending || messages.length === 0" @click="createSummary">
+                  Zusammenfassen
+                </button>
+              </div>
             </div>
 
             <div class="messages">

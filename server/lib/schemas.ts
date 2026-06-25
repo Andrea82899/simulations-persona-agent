@@ -37,5 +37,6 @@ export const SessionCreateSchema = PersonaInputSchema.extend({
 
 export const ChatInputSchema = z.object({
   sessionId: z.number().int().positive(),
-  message: z.string().min(1)
+  message: z.string().min(1),
+  requestCoach: z.boolean().optional()
 })
