@@ -25,6 +25,8 @@ type SimulationTemplate = {
 
 type ScenarioPreset = {
   title: string
+  focus: string
+  fit: string
   scenario: string
 }
 
@@ -45,19 +47,63 @@ const errorMessage = ref('')
 const revisedAnswers = ref<Record<number, string>>({})
 const scenarioPresets: ScenarioPreset[] = [
   {
-    title: 'Projektmeeting',
+    title: 'Meeting retten',
+    focus: 'Fokus halten',
+    fit: 'Projektmeeting entgleitet',
     scenario: 'Ein Projektmeeting verliert den Fokus. Mehrere Beteiligte bringen alte Erfahrungen, Seitenthemen und verdeckte Bedenken ein. Trainiert wird, das Gespräch ruhig zu strukturieren und wieder auf den nächsten konkreten Schritt zu führen.'
   },
   {
-    title: 'Feedbackgespräch',
+    title: 'Feedback geben',
+    focus: 'Emotion anerkennen',
+    fit: 'Feedbackgespräch mit starker Reaktion',
     scenario: 'Ein Feedbackgespräch wird anspruchsvoll, weil die angesprochene Person ausweicht, stark reagiert oder den Fokus verschiebt. Trainiert wird, klar zu bleiben, Beziehung zu halten und die Sachebene nicht zu verlieren.'
   },
   {
-    title: 'Veränderung',
+    title: 'Widerstand nutzen',
+    focus: 'Reframing',
+    fit: 'Skepsis gegen Veränderung',
     scenario: 'Ein Team reagiert zurückhaltend auf eine Veränderung. Es gibt Skepsis, direkte Grenzen und unausgesprochene Einwände. Trainiert wird, Interessen hinter Positionen zu erkennen und tragfähige nächste Schritte zu vereinbaren.'
   },
   {
-    title: 'Steering Committee',
+    title: 'Grenzen setzen',
+    focus: 'Grenzen setzen',
+    fit: 'Dominante Führungskraft im Raum',
+    scenario: 'Eine dominante Führungskraft beansprucht im Gespräch viel Redezeit, unterbricht andere und wertet Beiträge implizit ab. Trainiert wird, klar zu stoppen, Raum für andere Stimmen zu schaffen und Eskalation zu vermeiden.'
+  },
+  {
+    title: 'Stille lesen',
+    focus: 'Stille aushalten',
+    fit: 'Stiller Widerstand',
+    scenario: 'Eine Person nickt im Gespräch, bleibt innerlich aber auf Distanz und sagt kaum etwas. Trainiert wird, Kontakt herzustellen, einfache offene Fragen zu stellen und Stille nicht vorschnell zu füllen.'
+  },
+  {
+    title: 'Ablehnung klären',
+    focus: 'Interessen klären',
+    fit: 'Direkte Grenze oder Nein',
+    scenario: 'Eine Person lehnt eine Aufgabe direkt ab oder grenzt sich klar ab. Trainiert wird, die Grenze nicht persönlich zu nehmen, Verantwortlichkeiten sauber zu klären und Interessen hinter der Position sichtbar zu machen.'
+  },
+  {
+    title: 'Konflikt moderieren',
+    focus: 'Konflikt moderieren',
+    fit: 'Zwei Teammitglieder verhaken sich',
+    scenario: 'Zwei Teammitglieder geraten in eine festgefahrene Diskussion. Beide wiederholen ihre Position, während das Team wartet. Trainiert wird, Beiträge zu ordnen, Interessen zu trennen und den nächsten fairen Klärungsschritt zu setzen.'
+  },
+  {
+    title: 'Verbindlichkeit schaffen',
+    focus: 'Verbindlichkeit schaffen',
+    fit: 'Strategie-Workshop ohne Entscheidung',
+    scenario: 'Ein Strategie-Workshop bleibt angenehm, aber unverbindlich. Themen werden charmant verschoben, Entscheidungen bleiben offen und niemand möchte festlegen, wer was übernimmt. Trainiert wird, freundlich zu strukturieren und konkrete Zusagen einzuholen.'
+  },
+  {
+    title: 'Leistung ansprechen',
+    focus: 'Klarheit schaffen',
+    fit: 'Leistungsproblem im Alltag',
+    scenario: 'Eine Führungskraft muss ein wiederkehrendes Leistungsproblem ansprechen, ohne die Person abzuwerten oder in Rechtfertigungen zu versinken. Trainiert wird, Beobachtung, Wirkung und nächsten Schritt sauber zu trennen.'
+  },
+  {
+    title: 'Entscheidung vorbereiten',
+    focus: 'Entscheidung vorbereiten',
+    fit: 'Steering Committee',
     scenario: 'Ein Steering Committee verlangt Tempo, während operative Einwände sichtbar werden. Trainiert wird, dominante Stimmen zu begrenzen, stille Stimmen einzubinden und Entscheidungen sauber vorzubereiten.'
   }
 ]
@@ -263,6 +309,7 @@ function trainingContext(baseScenario: string, baseTargetAudience: string) {
 
 function applyScenarioPreset(preset: ScenarioPreset) {
   scenario.value = preset.scenario
+  trainingFocus.value = preset.focus
   errorMessage.value = ''
 }
 
@@ -437,6 +484,10 @@ onMounted(loadSessions)
                 <option>Stille aushalten</option>
                 <option>Emotion anerkennen</option>
                 <option>Interessen klären</option>
+                <option>Konflikt moderieren</option>
+                <option>Verbindlichkeit schaffen</option>
+                <option>Klarheit schaffen</option>
+                <option>Entscheidung vorbereiten</option>
               </select>
             </label>
             <label>
@@ -448,15 +499,17 @@ onMounted(loadSessions)
               </select>
             </label>
           </div>
-          <div class="preset-row">
+          <div class="preset-grid">
             <button
               v-for="preset in scenarioPresets"
               :key="preset.title"
-              class="preset-button"
+              class="preset-card"
               type="button"
               @click="applyScenarioPreset(preset)"
             >
-              {{ preset.title }}
+              <strong>{{ preset.title }}</strong>
+              <span>{{ preset.focus }}</span>
+              <small>{{ preset.fit }}</small>
             </button>
           </div>
         </section>

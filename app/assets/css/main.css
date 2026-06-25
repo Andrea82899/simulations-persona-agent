@@ -151,20 +151,38 @@ h3 {
   margin-bottom: 12px;
 }
 
-.preset-row {
-  display: flex;
-  flex-wrap: wrap;
+.preset-grid {
+  display: grid;
+  grid-template-columns: repeat(5, minmax(0, 1fr));
   gap: 8px;
 }
 
-.preset-button {
-  min-height: 36px;
-  padding: 0 12px;
+.preset-card {
+  display: grid;
+  gap: 6px;
+  min-height: 112px;
+  padding: 12px;
+  text-align: left;
   background: var(--panel-2);
   border: 1px solid var(--line);
   border-radius: 8px;
   color: var(--ink);
+}
+
+.preset-card strong {
+  font-size: 0.95rem;
   font-weight: 800;
+}
+
+.preset-card span {
+  color: var(--accent);
+  font-size: 0.82rem;
+  font-weight: 800;
+}
+
+.preset-card small {
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .template-section {
@@ -512,6 +530,7 @@ li + li {
   .persona-grid,
   .setup,
   .control-grid,
+  .preset-grid,
   .template-grid,
   .phrase-grid,
   .summary-grid {
