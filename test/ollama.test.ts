@@ -69,8 +69,43 @@ describe('Ollama-Client', () => {
     expect(body.messages[0].content).toContain('Swissness')
     expect(body.messages[0].content).toContain('lösungsorientiert')
     expect(body.messages[0].content).toContain('Überforderung')
+    expect(body.keep_alive).toBe('10m')
+    expect(body.options.num_ctx).toBe(2048)
+    expect(body.options.num_predict).toBe(80)
     expect(reply).toContain('echte Beispiele')
     expect(reply).not.toContain('überfordert')
+  })
+
+  it('sendet im Chat nur die letzten acht Verlaufsnachrichten an Ollama', async () => {
+    const fetchMock = vi.fn(async () => ({
+      ok: true,
+      json: async () => ({ message: { content: 'Ich brauche zuerst einen konkreten nächsten Schritt.' } })
+    }))
+    vi.stubGlobal('fetch', fetchMock)
+
+    const messages: ChatMessage[] = Array.from({ length: 12 }, (_, index) => ({
+      id: index + 1,
+      sessionId: 1,
+      role: index % 2 === 0 ? 'user' : 'persona',
+      content: `Nachricht ${index + 1}`,
+      createdAt: new Date().toISOString()
+    }))
+
+    await generatePersonaReply({
+      scenario: 'Ein lokales Research-Tool.',
+      targetAudience: 'B2B-Produktteams',
+      persona,
+      messages,
+      userMessage: 'Was brauchst du dafür?'
+    })
+
+    const body = JSON.parse(fetchMock.mock.calls[0][1].body)
+    const sentContents = body.messages.map((message: { content: string }) => message.content)
+
+    expect(sentContents).not.toContain('Nachricht 1')
+    expect(sentContents).not.toContain('Nachricht 4')
+    expect(sentContents).toContain('Nachricht 5')
+    expect(sentContents).toContain('Nachricht 12')
   })
 
   it('fordert Swissness und konstruktive Persona-Generierung an', async () => {

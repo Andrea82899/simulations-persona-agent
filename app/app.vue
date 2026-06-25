@@ -21,6 +21,7 @@ const difficulty = ref('mittel')
 const currentSession = ref<StoredSession | null>(null)
 const sessions = ref<SessionListItem[]>([])
 const pending = ref(false)
+const coachPending = ref(false)
 const chatMessage = ref('')
 const errorMessage = ref('')
 const revisedAnswers = ref<Record<number, string>>({})
@@ -129,6 +130,9 @@ async function sendMessage() {
         message
       }
     })
+    if (userMessageCount.value > 0 && userMessageCount.value % 10 === 0) {
+      void requestCoachFeedback({ silent: true })
+    }
   } catch (error: any) {
     chatMessage.value = message
     errorMessage.value = error?.statusMessage || error?.message || 'Die Persona konnte nicht antworten.'
@@ -137,19 +141,23 @@ async function sendMessage() {
   }
 }
 
-async function requestCoachFeedback() {
-  if (!currentSession.value || userMessageCount.value === 0) return
+async function requestCoachFeedback(options: { silent?: boolean } = {}) {
+  if (!currentSession.value || userMessageCount.value === 0 || coachPending.value) return
 
-  errorMessage.value = ''
-  pending.value = true
+  if (!options.silent) {
+    errorMessage.value = ''
+  }
+  coachPending.value = true
   try {
     currentSession.value = await $fetch<StoredSession>(`/api/sessions/${currentSession.value.id}/coach`, {
       method: 'POST'
     })
   } catch (error: any) {
-    errorMessage.value = error?.statusMessage || error?.message || 'Das Coach-Feedback konnte nicht erzeugt werden.'
+    if (!options.silent) {
+      errorMessage.value = error?.statusMessage || error?.message || 'Das Coach-Feedback konnte nicht erzeugt werden.'
+    }
   } finally {
-    pending.value = false
+    coachPending.value = false
   }
 }
 
@@ -236,6 +244,7 @@ onMounted(loadSessions)
             :messages="messages"
             :coach-feedback-by-message-id="coachFeedbackByMessageId"
             :pending="pending"
+            :coach-pending="coachPending"
             :user-message-count="userMessageCount"
             :next-auto-feedback-in="nextAutoFeedbackIn"
             @send="sendMessage"

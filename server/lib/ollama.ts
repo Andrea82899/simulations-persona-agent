@@ -9,6 +9,7 @@ type OllamaMessage = {
 type OllamaCallOptions = {
   temperature?: number
   numPredict?: number
+  numCtx?: number
   timeoutMs?: number
 }
 
@@ -28,9 +29,10 @@ async function callOllama(messages: OllamaMessage[], options: OllamaCallOptions 
         model: config.ollamaModel,
         messages,
         stream: false,
+        keep_alive: '10m',
         options: {
           temperature: options.temperature ?? 0.65,
-          num_ctx: 4096,
+          num_ctx: options.numCtx ?? 2048,
           num_predict: options.numPredict ?? 420
         }
       })
@@ -126,7 +128,7 @@ export async function generatePersona(scenario: string, targetAudience: string):
       role: 'user',
       content: `Szenario:\n${scenario}\n\nZielgruppe:\n${targetAudience}\n\nErzeuge genau eine plausible Persona, die die Zielgruppe exakt erfüllt.`
     }
-  ], { temperature: 0.55, numPredict: 420, timeoutMs: 90000 })
+  ], { temperature: 0.55, numPredict: 320, numCtx: 2048, timeoutMs: 75000 })
 
   return swissSolutionValue(PersonaSchema.parse(parseJsonFromModel(content)))
 }
@@ -138,7 +140,7 @@ export async function generatePersonaReply(params: {
   messages: ChatMessage[]
   userMessage: string
 }) {
-  const history: OllamaMessage[] = params.messages.map((message) => ({
+  const history: OllamaMessage[] = params.messages.slice(-8).map((message) => ({
     role: message.role === 'user' ? 'user' : 'assistant',
     content: message.content
   }))
@@ -152,7 +154,7 @@ export async function generatePersonaReply(params: {
         'Wenn in der Persona ein Muster, ein typischer Satz oder ein Übungsfeld beschrieben ist, zeige dieses Verhalten natürlich im Gespräch, ohne das Muster oder Übungsfeld zu benennen.',
         'Bleibe trainingsrealistisch: herausfordernd genug zum Üben, aber nicht karikierend.',
         'Antworte natürlich, konkret und aus der Ich-Perspektive der Persona.',
-        'Halte deine Antwort deutlich kurz: maximal 1 bis 3 Sätze, keine langen Erklärungen.',
+        'Halte deine Antwort sehr kurz: maximal 1 bis 2 Sätze, keine langen Erklärungen.',
         'Stelle höchstens eine kurze Rückfrage.',
         'Dein Ton strahlt Swissness aus: ruhig, verbindlich, qualitätsbewusst, pragmatisch und lösungsorientiert.',
         'Schreibe in Schweizer Hochdeutsch mit ss statt ß.',
@@ -165,7 +167,7 @@ export async function generatePersonaReply(params: {
     },
     ...history,
     { role: 'user', content: params.userMessage }
-  ], { temperature: 0.7, numPredict: 120, timeoutMs: 90000 })
+  ], { temperature: 0.7, numPredict: 80, numCtx: 2048, timeoutMs: 60000 })
 
   return swissSolutionText(reply)
 }
@@ -207,7 +209,7 @@ export async function generateCoachFeedback(params: {
         'Erstelle ein kompaktes Coach-Feedback. Alternative als direkt nutzbaren Satz formulieren.'
       ].join('\n\n')
     }
-  ], { temperature: 0.35, numPredict: 300, timeoutMs: 90000 })
+  ], { temperature: 0.35, numPredict: 220, numCtx: 2048, timeoutMs: 75000 })
 
   return swissSolutionValue(CoachFeedbackSchema.parse(parseJsonFromModel(content)))
 }

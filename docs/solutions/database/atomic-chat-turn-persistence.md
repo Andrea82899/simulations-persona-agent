@@ -3,7 +3,7 @@ title: Atomic chat turn persistence
 category: database
 date: 2026-06-25
 components: server/api/chat.post.ts, server/lib/db.ts
-tags: sqlite, chat, transaction, ollama, coach-feedback
+tags: sqlite, chat, transaction, ollama, coach-feedback, latency
 ---
 
 # Atomic Chat Turn Persistence
@@ -26,41 +26,29 @@ The database write and the model call were not treated as one chat turn. Optiona
 
 ## Solution
 
-Generate the persona reply first, treat coach feedback as optional, then persist the complete turn in a SQLite transaction:
+Generate the persona reply first, then persist the complete turn in a SQLite transaction:
 
 ```ts
 const reply = await generatePersonaReply(...)
 
-let coachFeedback = null
-if (shouldGenerateCoachFeedback) {
-  try {
-    coachFeedback = await generateCoachFeedback(...)
-  } catch {
-    coachFeedback = null
-  }
-}
-
 saveChatTurn({
   sessionId: input.sessionId,
   userMessage: input.message,
-  personaReply: reply,
-  coachFeedback
+  personaReply: reply
 })
 ```
 
-The database helper inserts the user message, persona reply and optional coach feedback together:
+The database helper inserts the user message and persona reply together:
 
 ```ts
 return database.transaction(() => {
   const createdAt = now()
   const userResult = insertMessage.run(input.sessionId, 'user', input.userMessage, createdAt)
   insertMessage.run(input.sessionId, 'persona', input.personaReply, createdAt)
-
-  if (input.coachFeedback) {
-    insertFeedback.run(input.sessionId, Number(userResult.lastInsertRowid), JSON.stringify(input.coachFeedback), createdAt)
-  }
 })()
 ```
+
+Coach feedback should not sit on the critical chat path. Trigger it through the dedicated coach endpoint after the persona reply is returned to the UI.
 
 ## What Didn't Work
 
@@ -69,7 +57,7 @@ Keeping `addMessage()` calls in the endpoint made the happy path simple, but it 
 ## Prevention
 
 - Treat a user/persona exchange as one database operation.
-- Keep optional coach feedback from blocking the main chat response.
+- Keep optional coach feedback outside the main chat response.
 - Test that a saved chat turn stores user and persona messages chronologically and links coach feedback to the user message.
 - When adding new per-turn side effects, attach them to the transaction only if they are required for the chat turn to be valid.
 

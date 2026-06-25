@@ -6,6 +6,7 @@ defineProps<{
   messages: ChatMessage[]
   coachFeedbackByMessageId: Record<number, CoachFeedback>
   pending: boolean
+  coachPending: boolean
   userMessageCount: number
   nextAutoFeedbackIn: number
 }>()
@@ -31,8 +32,8 @@ const emit = defineEmits<{
         </p>
       </div>
       <div class="chat-actions">
-        <button class="secondary" :disabled="pending || userMessageCount === 0" @click="emit('requestCoachFeedback')">
-          Coach-Feedback
+        <button class="secondary" :disabled="pending || coachPending || userMessageCount === 0" @click="emit('requestCoachFeedback')">
+          {{ coachPending ? 'Coach läuft...' : 'Coach-Feedback' }}
         </button>
         <button class="secondary" :disabled="pending || messages.length === 0" @click="emit('createSummary')">
           Zusammenfassen
