@@ -16,7 +16,7 @@ Die App laeuft lokal. Standardmaessig werden keine Daten an Cloud-Dienste gesend
 
 ## Funktionen
 
-- Feste Simulationspersonas wie Rajani, Luca, Bernd, Sasha, Miriam und Finn
+- Drei feste Simulationspersonas: Hansueli, Dr. Susanne Moser und Bernd
 - Trainingsfokus und Schwierigkeitsgrad
 - Trainingskarten fuer Meeting, Feedback, Widerstand, Stille, Konflikt, Verbindlichkeit und Entscheidung
 - Freier Persona-Chat

@@ -10,7 +10,6 @@ import {
   scenarioPresets,
   simulationTemplates,
   type ScenarioPreset,
-  type SessionListItem,
   type SimulationTemplate
 } from './composables/useSimulationCatalog'
 
@@ -19,7 +18,6 @@ const targetAudience = ref(defaultTargetAudience)
 const trainingFocus = ref('Fokus halten')
 const difficulty = ref('mittel')
 const currentSession = ref<StoredSession | null>(null)
-const sessions = ref<SessionListItem[]>([])
 const pending = ref(false)
 const coachPending = ref(false)
 const chatMessage = ref('')
@@ -41,10 +39,6 @@ const pendingLabel = computed(() => {
   if (!persona.value) return 'Das lokale Modell erzeugt eine neue Persona.'
   return 'Die Persona antwortet kurz.'
 })
-
-async function loadSessions() {
-  sessions.value = await $fetch<SessionListItem[]>('/api/sessions')
-}
 
 function trainingContext(baseScenario: string, baseTargetAudience: string) {
   return buildTrainingContext({
@@ -82,7 +76,6 @@ async function startSimulation() {
         persona: generatedPersona
       }
     })
-    await loadSessions()
   } catch (error: any) {
     errorMessage.value = error?.statusMessage || error?.message || 'Die Persona konnte nicht erzeugt werden.'
   } finally {
@@ -107,7 +100,6 @@ async function startTemplateSimulation(template: SimulationTemplate) {
     targetAudience.value = context.targetAudience
     chatMessage.value = ''
     revisedAnswers.value = {}
-    await loadSessions()
   } catch (error: any) {
     errorMessage.value = error?.statusMessage || error?.message || 'Die Vorlage konnte nicht gestartet werden.'
   } finally {
@@ -177,19 +169,12 @@ async function createSummary() {
   }
 }
 
-async function openSession(id: number) {
-  errorMessage.value = ''
-  currentSession.value = await $fetch<StoredSession>(`/api/sessions/${id}`)
-}
-
 function resetSimulation() {
   currentSession.value = null
   chatMessage.value = ''
   errorMessage.value = ''
   revisedAnswers.value = {}
 }
-
-onMounted(loadSessions)
 </script>
 
 <template>
@@ -197,10 +182,10 @@ onMounted(loadSessions)
   <main class="shell">
     <section class="workspace">
       <SimulationSessionSidebar
-        :sessions="sessions"
-        :current-session-id="currentSession?.id || null"
+        :personas="simulationTemplates"
+        :active-persona-name="persona?.name || null"
         @reset="resetSimulation"
-        @open="openSession"
+        @start-persona="startTemplateSimulation"
       />
 
       <section id="main-content" class="main-panel">

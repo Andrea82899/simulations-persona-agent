@@ -174,16 +174,6 @@ h3 {
   text-align: center;
 }
 
-.history-search input {
-  width: 100%;
-  min-height: 40px;
-  padding: 0 12px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  color: var(--ink);
-}
-
 .history-item {
   display: grid;
   gap: 4px;
@@ -210,14 +200,9 @@ h3 {
   -webkit-line-clamp: 2;
 }
 
-.history-toggle {
-  min-height: 38px;
-  padding: 0 12px;
-  color: var(--accent);
-  background: transparent;
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  font-weight: 800;
+.history-item small {
+  color: var(--muted);
+  line-height: 1.35;
 }
 
 .main-panel {

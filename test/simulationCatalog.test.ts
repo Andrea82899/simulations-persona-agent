@@ -1,6 +1,6 @@
 import { describe, expect, it } from 'vitest'
 import { nextFeedbackCountdown } from '../app/composables/useCoachCadence'
-import { buildTrainingContext, focusOptions, scenarioPresets } from '../app/composables/useSimulationCatalog'
+import { buildTrainingContext, focusOptions, scenarioPresets, simulationTemplates } from '../app/composables/useSimulationCatalog'
 
 describe('Simulationskatalog', () => {
   it('setzt beim Trainingsfall den passenden Fokus', () => {
@@ -23,6 +23,14 @@ describe('Simulationskatalog', () => {
     expect(context.scenario).toContain('testet Interventionen aktiv')
     expect(context.targetAudience).toContain('Trainingssetting für Fokus halten')
   })
+
+  it('zeigt genau die drei freigegebenen Simulationspersonas', () => {
+    expect(simulationTemplates.map((template) => template.persona.name)).toEqual([
+      'Hansueli',
+      'Dr. Susanne Moser',
+      'Bernd'
+    ])
+  })
 })
 
 describe('Coach-Cadence', () => {
@@ -33,4 +41,3 @@ describe('Coach-Cadence', () => {
     expect(nextFeedbackCountdown(10, true)).toBe(10)
   })
 })
-

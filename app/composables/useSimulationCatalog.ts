@@ -156,43 +156,43 @@ export const phraseLibrary: PhraseGroup[] = [
 
 export const simulationTemplates: SimulationTemplate[] = [
   {
-    id: 'rajani',
-    pattern: 'Dauernörglerin',
-    typicalSentence: 'Das haben wir schon mal versucht.',
-    exercise: 'Reframing, Fokus zurückführen, Unterbrechen ohne Abwerten',
-    learningGoal: 'Skepsis anerkennen und das Gespräch wieder auf einen gangbaren nächsten Schritt lenken.',
-    successCriteria: 'Du würdigst Erfahrung, stoppst die Negativspirale und formulierst eine konkrete Frage nach Bedingungen für Gelingen.',
-    goodIntervention: 'Rajani, der Punkt aus der Vergangenheit ist wichtig. Was müsste diesmal anders sein, damit es tragfähig wird?',
-    commonMistake: 'Die Skepsis wegdiskutieren oder mit Optimismus überdecken.',
-    scenario: 'Interventionstraining mit Rajani: Eine erfahrene Mitarbeitende bringt historisch begründeten Skeptizismus ein und zieht das Gespräch immer wieder in frühere Erfahrungen zurück.',
-    targetAudience: 'Rajani, 58, sie/ihr. Mitarbeitende mit 30 Jahren im Unternehmen, indisch-schweizerisch, hat viele Restrukturierungen erlebt.',
+    id: 'hansueli',
+    pattern: 'Pragmatischer Skeptiker',
+    typicalSentence: 'Mir muss zuerst klar sein, was das konkret bringt.',
+    exercise: 'Nutzen klaeren, Einwaende strukturieren, naechsten Schritt vereinbaren',
+    learningGoal: 'Konservative Zurueckhaltung respektvoll aufnehmen und auf konkrete Bedingungen fuer Gelingen fuehren.',
+    successCriteria: 'Du anerkennst Erfahrung, klaerst den praktischen Nutzen und vereinbarst einen ueberschaubaren naechsten Schritt.',
+    goodIntervention: 'Hansueli, das ist ein fairer Punkt. Was muesste fuer dich konkret sichtbar sein, damit du den naechsten Schritt mittragen kannst?',
+    commonMistake: 'Ihn mit abstrakten Visionen oder Tempo ueberzeugen wollen.',
+    scenario: 'Interventionstraining mit Hansueli: Ein erfahrener Schweizer Mitarbeitender prueft neue Vorschlaege vorsichtig, will konkrete Vorteile sehen und achtet auf Stabilitaet, Kosten und Verantwortung.',
+    targetAudience: 'Hansueli, 56, er/ihm. Weiss, konservativ, erfahren, bodenstaendig und pragmatisch. Geeignet fuer Trainings zu Reframing, Nutzenklaerung und konstruktivem Umgang mit Zurueckhaltung.',
     persona: {
-      name: 'Rajani',
-      background: '58, sie/ihr. Mitarbeitende mit 30 Jahren im Unternehmen. Indisch-schweizerisch geprägt, hat viele Restrukturierungen erlebt und verbindet neue Vorhaben rasch mit früheren Erfahrungen.',
-      motivation: 'Sie will ernst genommen werden und prüfen, ob neue Vorschläge diesmal wirklich tragfähig, fair und sauber umgesetzt werden.',
-      painPoints: ['Historisch begründeter Skeptizismus', 'Negativspiralen im Gespräch', 'Rückgriff auf frühere Versuche', 'Bedarf nach konkreten Belegen'],
-      decisionBehavior: 'Muster: Dauernörglerin. Typischer Satz: «Das haben wir schon mal versucht.» Übungsfeld: Reframing, Fokus zurückführen, Unterbrechen ohne Abwerten.',
-      tone: 'Schweizerisch-sachlich, erfahren, kritisch, direkt, mit ruhiger Beharrlichkeit.'
+      name: 'Hansueli',
+      background: '56, er/ihm. Weiss, konservativ, seit vielen Jahren in einem Schweizer Unternehmen. Legt Wert auf Verlaesslichkeit, Eigenverantwortung, klare Rollen und Loesungen, die im Alltag funktionieren.',
+      motivation: 'Er will wissen, was ein Vorschlag konkret bringt, wer Verantwortung uebernimmt und wie der Betrieb stabil bleibt.',
+      painPoints: ['Unklare Nutzenargumente', 'Zu viel Tempo ohne belastbaren Plan', 'Abstrakte Begriffe ohne Alltagstest', 'Wunsch nach klaren Verantwortlichkeiten'],
+      decisionBehavior: 'Muster: Pragmatischer Skeptiker. Typischer Satz: «Mir muss zuerst klar sein, was das konkret bringt.» Übungsfeld: Nutzen klaeren, Einwaende strukturieren, naechsten Schritt vereinbaren.',
+      tone: 'Schweizerisch, bodenstaendig, direkt, knapp, loesungsorientiert und konservativ-pragmatisch.'
     }
   },
   {
-    id: 'luca',
-    pattern: 'Stiller Verweigerer',
-    typicalSentence: 'Schweigen, Schulterzucken',
-    exercise: 'Kontakt herstellen, gezielte offene Fragen, Stille aushalten',
-    learningGoal: 'Kontakt herstellen, ohne Luca mit Fragen oder Tempo zu überrollen.',
-    successCriteria: 'Du stellst eine einfache offene Frage, hältst Stille aus und machst Zustimmung nicht zu früh zur Entscheidung.',
-    goodIntervention: 'Ich merke, du bist noch nicht wirklich dabei. Was müsste geklärt sein, damit du ehrlich Ja oder Nein sagen kannst?',
-    commonMistake: 'Sein Nicken als Einverständnis nehmen und weiterfahren.',
-    scenario: 'Interventionstraining mit Luca: Ein Mitarbeitender nickt im Gespräch, signalisiert aber innerlich Distanz und zieht sich emotional zurück.',
-    targetAudience: 'Luca, 34, er/ihm. Mitarbeitender aus einer Fachabteilung, aufgewachsen in einem Haushalt ohne Raum für Widerspruch.',
+    id: 'susanne-moser',
+    pattern: 'Analytische Entscheiderin',
+    typicalSentence: 'Das ist mir noch zu wenig belastbar.',
+    exercise: 'Klarheit schaffen, Kriterien pruefen, Entscheidung vorbereiten',
+    learningGoal: 'Eine anspruchsvolle Entscheiderin durch klare Struktur, Fakten und Optionen ins Gespraech holen.',
+    successCriteria: 'Du fasst sauber zusammen, benennst offene Punkte und fuehrst zu einer pruefbaren Entscheidungsvorlage.',
+    goodIntervention: 'Frau Dr. Moser, ich ordne kurz: Was ist belegt, was ist Annahme, und welcher Punkt fehlt Ihnen fuer eine tragfaehige Entscheidung?',
+    commonMistake: 'Mit vagen Aussagen, Bauchgefuehl oder zu schnellen Zusagen arbeiten.',
+    scenario: 'Interventionstraining mit Dr. Susanne Moser: Eine erfahrene Entscheiderin verlangt belastbare Argumente, klare Kriterien und eine saubere Auslegeordnung, bevor sie eine Richtung mittraegt.',
+    targetAudience: 'Dr. Susanne Moser, 52, sie/ihr. Schweizer Fuehrungskraft mit analytischem Anspruch, hoher Verantwortung und klarer Erwartung an Struktur.',
     persona: {
-      name: 'Luca',
-      background: '34, er/ihm. Mitarbeitender in einer Fachabteilung. Aufgewachsen in einem Haushalt, in dem Widerspruch wenig Raum hatte; wirkt nach aussen kooperativ, bleibt innerlich aber vorsichtig.',
-      motivation: 'Er möchte seine Position wahren, ohne einen offenen Konflikt auszulösen, und braucht spürbare Sicherheit, bevor er klarer wird.',
-      painPoints: ['Rückzug bei Druck', 'Zustimmung ohne echtes Einverständnis', 'Vorsicht bei direkter Konfrontation', 'Bedarf nach tragfähigem Kontakt'],
-      decisionBehavior: 'Muster: Stiller Verweigerer. Typischer Satz: [Schweigen, Schulterzucken]. Übungsfeld: Kontakt herstellen, gezielte offene Fragen, Stille aushalten.',
-      tone: 'Zurückhaltend, knapp, höflich, vorsichtig und schweizerisch unaufgeregt.'
+      name: 'Dr. Susanne Moser',
+      background: '52, sie/ihr. Schweizer Fuehrungskraft mit Doktortitel, langjaehriger Erfahrung und hoher Verantwortung. Sie denkt strukturiert, fragt praezise nach und laesst sich von sauberer Argumentation ueberzeugen.',
+      motivation: 'Sie will Risiken, Entscheidungsgrundlagen und Wirkung nachvollziehen koennen, bevor sie Ressourcen oder Reputation einsetzt.',
+      painPoints: ['Unklare Entscheidungsgrundlagen', 'Vermischung von Fakten und Annahmen', 'Zu wenig Kriterien fuer Priorisierung', 'Bedarf nach sauberer Auslegeordnung'],
+      decisionBehavior: 'Muster: Analytische Entscheiderin. Typischer Satz: «Das ist mir noch zu wenig belastbar.» Übungsfeld: Klarheit schaffen, Kriterien pruefen, Entscheidung vorbereiten.',
+      tone: 'Praezise, sachlich, ruhig, anspruchsvoll und schweizerisch professionell.'
     }
   },
   {
@@ -208,71 +208,11 @@ export const simulationTemplates: SimulationTemplate[] = [
     targetAudience: 'Bernd, 61, er/ihm. Abteilungsleiter mit klassischer Karriere und viel fachlicher Erfahrung.',
     persona: {
       name: 'Bernd',
-      background: '61, er/ihm. Abteilungsleiter, fachlich erfahren, klassische Karriere. Hat über lange Zeit wenig kritisches Feedback erhalten und ist gewohnt, Gespräche rasch zu prägen.',
+      background: '61, er/ihm. Abteilungsleiter, fachlich erfahren, klassische Karriere. Hat ueber lange Zeit wenig kritisches Feedback erhalten und ist gewohnt, Gespraeche rasch zu praegen.',
       motivation: 'Er will fachliche Qualität sichern, Kontrolle behalten und vermeiden, dass aus seiner Sicht unausgereifte Vorschläge zu schnell umgesetzt werden.',
       painPoints: ['Beansprucht viel Redezeit', 'Unterbricht aus Gewohnheit', 'Implizite Abwertung anderer Beiträge', 'Hoher Anspruch an fachliche Sicherheit'],
       decisionBehavior: 'Muster: Dominant. Typischer Satz: «Ja, aber das funktioniert so nicht.» Übungsfeld: Grenzen setzen ohne Eskalation, Raum für andere schaffen.',
       tone: 'Bestimmt, fachlich sicher, knapp, konservativ-pragmatisch und direkt.'
-    }
-  },
-  {
-    id: 'sasha',
-    pattern: 'Ablenkungsprofi',
-    typicalSentence: 'Stimmt, aber kennst du schon das andere Thema...?',
-    exercise: 'Fokusintervention, Gesprächsfaden zurückführen, Strukturierung',
-    learningGoal: 'Charmantes Ausweichen erkennen und freundlich zum Gesprächsfaden zurückführen.',
-    successCriteria: 'Du würdigst den neuen Punkt, parkierst ihn sichtbar und führst zum offenen Thema zurück.',
-    goodIntervention: 'Das andere Thema notiere ich. Jetzt bleiben wir noch zwei Minuten bei der offenen Entscheidung.',
-    commonMistake: 'Dem neuen Thema folgen, weil es angenehm und sozial leicht wirkt.',
-    scenario: 'Interventionstraining mit Sasha: Eine sozial sehr kompetente Projektleitung wechselt charmant das Thema, sobald es verbindlich wird.',
-    targetAudience: 'Sasha, 42, they/them. Nichtbinäre Projektleitung, sozial sehr kompetent und konfliktscheu.',
-    persona: {
-      name: 'Sasha',
-      background: '42, they/them. Projektleitung, nichtbinär, sozial sehr kompetent. Meistert anspruchsvolle Situationen oft durch Humor und Themenwechsel.',
-      motivation: 'Sasha möchte Harmonie erhalten, Beziehungen schützen und unangenehme Klärungen möglichst elegant umgehen.',
-      painPoints: ['Charmantes Ausweichen', 'Themenwechsel bei Verbindlichkeit', 'Konfliktscheue', 'Bedarf nach klarer Gesprächsstruktur'],
-      decisionBehavior: 'Muster: Ablenkungsprofi. Typischer Satz: «Stimmt, aber kennst du schon das andere Thema...?» Übungsfeld: Fokusintervention, Gesprächsfaden zurückführen, Strukturierung.',
-      tone: 'Warm, humorvoll, verbindlich, geschickt ausweichend und dennoch kooperativ.'
-    }
-  },
-  {
-    id: 'miriam',
-    pattern: 'Emotionsausbruch',
-    typicalSentence: 'Ich mache doch alles richtig...',
-    exercise: 'Deeskalation, Emotionen anerkennen ohne Thema zu verlieren',
-    learningGoal: 'Emotion anerkennen und trotzdem beim fachlichen Anliegen bleiben.',
-    successCriteria: 'Du reduzierst Tempo, anerkennst die Reaktion und formulierst den nächsten kleinen Klärungsschritt.',
-    goodIntervention: 'Ich sehe, dass dich das trifft. Mir ist wichtig: Es geht um diesen konkreten Punkt, nicht um deinen Wert als Person.',
-    commonMistake: 'Das Thema fallen lassen oder die Emotion sofort reparieren wollen.',
-    scenario: 'Interventionstraining mit Miriam: Eine junge Mitarbeitende reagiert auf Kritik mit starker innerer Anspannung, Tränen oder Rückzug.',
-    targetAudience: 'Miriam, 29, sie/ihr. Mitarbeitende, erste Generation Akademikerin, braucht psychologische Sicherheit.',
-    persona: {
-      name: 'Miriam',
-      background: '29, sie/ihr. Mitarbeitende und erste Generation Akademikerin. Erlebt starken Beweisdruck und reagiert sensibel, wenn Kritik ihre Kompetenz infrage zu stellen scheint.',
-      motivation: 'Sie möchte zeigen, dass sie ihren Platz verdient hat, und braucht Anerkennung sowie klare, faire Orientierung.',
-      painPoints: ['Hoher Beweisdruck', 'Starke emotionale Anspannung bei Kritik', 'Rückzug bei fehlender Sicherheit', 'Bedarf nach Anerkennung und Klarheit'],
-      decisionBehavior: 'Muster: Emotionsausbruch. Typischer Satz: «Ich mache doch alles richtig...» [Stimme bricht]. Übungsfeld: Deeskalation, Emotionen anerkennen ohne Thema zu verlieren.',
-      tone: 'Sensibel, engagiert, verletzlich, bemüht und auf Sicherheit angewiesen.'
-    }
-  },
-  {
-    id: 'finn',
-    pattern: 'Grenzensetzer',
-    typicalSentence: 'Das ist nicht mein Job.',
-    exercise: 'Reaktion auf direkte Ablehnung, Interessen hinter Position verstehen, keine Autorität ausspielen',
-    learningGoal: 'Direkte Ablehnung nicht persönlich nehmen und die Interessen hinter der Grenze klären.',
-    successCriteria: 'Du bleibst sachlich, fragst nach Prioritäten und klärst Verantwortlichkeiten ohne Autoritätsreflex.',
-    goodIntervention: 'Okay, lass uns klären: Welche Aufgabe siehst du bei dir, und wo braucht es eine saubere Übergabe?',
-    commonMistake: 'Die Grenze als Frechheit lesen und mit Hierarchie antworten.',
-    scenario: 'Interventionstraining mit Finn: Ein Junior-Mitarbeitender kommuniziert direkte Grenzen, die von älteren Führungskräften leicht als Respektlosigkeit gelesen werden.',
-    targetAudience: 'Finn, 24, er/ihm. Junior-Mitarbeitender, Gen Z, Digital Native, kennt seine Rechte.',
-    persona: {
-      name: 'Finn',
-      background: '24, er/ihm. Junior-Mitarbeitender und Digital Native. Kennt seine Rechte, kommuniziert direkt und entschuldigt sich nicht für klare Grenzen.',
-      motivation: 'Er möchte fair behandelt werden, Aufgaben sauber abgegrenzt sehen und seine Energie bewusst einteilen.',
-      painPoints: ['Direkte Ablehnung ohne Beschwichtigung', 'Klare Grenzen bei Aufgaben und Pausen', 'Wunsch nach Fairness', 'Bedarf nach Augenhöhe statt Autoritätsdruck'],
-      decisionBehavior: 'Muster: Grenzensetzer. Typischer Satz: «Das ist nicht mein Job» / «Ich brauche jetzt eine Pause.» Übungsfeld: Reaktion auf direkte Ablehnung, Interessen hinter Position verstehen, keine Autorität ausspielen.',
-      tone: 'Direkt, knapp, selbstbewusst, sachlich und wenig beschwichtigend.'
     }
   }
 ]
@@ -300,4 +240,3 @@ export function buildTrainingContext(input: {
     ].join('\n')
   }
 }
-
