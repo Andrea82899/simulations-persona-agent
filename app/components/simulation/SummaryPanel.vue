@@ -8,35 +8,39 @@ defineProps<{
 
 <template>
   <section class="summary">
-    <h2>Auswertung</h2>
+    <p class="eyebrow">KI-Coach</p>
+    <h2>Abschluss-Coaching nach WWW</h2>
     <div class="summary-grid">
       <article>
-        <h3>Insights</h3>
-        <ul><li v-for="item in summary.insights" :key="item">{{ item }}</li></ul>
+        <h3>Stärke</h3>
+        <p>{{ summary.strength }}</p>
+        <blockquote>{{ summary.strengthQuote }}</blockquote>
       </article>
       <article>
-        <h3>Bedürfnisse</h3>
-        <ul><li v-for="item in summary.needs" :key="item">{{ item }}</li></ul>
+        <h3>Wichtigster Punkt</h3>
+        <p>{{ summary.improvement }}</p>
+        <blockquote>{{ summary.improvementQuote }}</blockquote>
       </article>
       <article>
-        <h3>Klärungspunkte</h3>
-        <ul><li v-for="item in summary.objections" :key="item">{{ item }}</li></ul>
+        <h3>WWW-Blick</h3>
+        <dl>
+          <div>
+            <dt>Wahrnehmung</dt>
+            <dd>{{ summary.wwwFeedback.perception }}</dd>
+          </div>
+          <div>
+            <dt>Wirkung</dt>
+            <dd>{{ summary.wwwFeedback.effect }}</dd>
+          </div>
+          <div>
+            <dt>Wunsch</dt>
+            <dd>{{ summary.wwwFeedback.wish }}</dd>
+          </div>
+        </dl>
       </article>
       <article>
-        <h3>Muster</h3>
-        <ul><li v-for="item in summary.patterns" :key="item">{{ item }}</li></ul>
-      </article>
-      <article>
-        <h3>Empfehlungen</h3>
-        <ul><li v-for="item in summary.recommendations" :key="item">{{ item }}</li></ul>
-      </article>
-      <article v-if="summary.teamLearning?.length">
-        <h3>Team-Lernen</h3>
-        <ul><li v-for="item in summary.teamLearning" :key="item">{{ item }}</li></ul>
-      </article>
-      <article v-if="summary.practiceSentences?.length">
-        <h3>Übungssätze</h3>
-        <ul><li v-for="item in summary.practiceSentences" :key="item">{{ item }}</li></ul>
+        <h3>Bessere Beispielsätze</h3>
+        <ul><li v-for="item in summary.exampleSentences" :key="item">{{ item }}</li></ul>
       </article>
     </div>
   </section>

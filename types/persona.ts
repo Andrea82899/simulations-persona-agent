@@ -8,13 +8,16 @@ export type PersonaProfile = {
 }
 
 export type SessionSummary = {
-  insights: string[]
-  needs: string[]
-  objections: string[]
-  patterns: string[]
-  recommendations: string[]
-  teamLearning?: string[]
-  practiceSentences?: string[]
+  strength: string
+  strengthQuote: string
+  improvement: string
+  improvementQuote: string
+  exampleSentences: string[]
+  wwwFeedback: {
+    perception: string
+    effect: string
+    wish: string
+  }
 }
 
 export type ChatRole = 'user' | 'persona'

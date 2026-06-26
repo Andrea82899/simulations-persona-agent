@@ -13,11 +13,19 @@ const persona: PersonaProfile = {
 }
 
 const summary: SessionSummary = {
-  insights: ['Das Tool muss schnelle erste Hypothesen liefern.'],
-  needs: ['Klare, speicherbare Simulationen.'],
-  objections: ['Skepsis gegenüber rein synthetischem Feedback.'],
-  patterns: ['Zeitdruck prägt die Bewertung.'],
-  recommendations: ['Simulationen klar als Ergänzung zu echten Interviews positionieren.']
+  strength: 'Die Führungskraft beschreibt eine konkrete Beobachtung.',
+  strengthQuote: 'Mir ist aufgefallen, dass zwei Termine nicht gehalten wurden.',
+  improvement: 'Der Wunsch soll noch machbarer werden.',
+  improvementQuote: 'Das muss besser werden.',
+  exampleSentences: [
+    'Ich wünsche mir, dass du spätestens am Vortag meldest, wenn ein Termin wackelt.',
+    'Lass uns vereinbaren, welche Informationen in der Übergabe zwingend enthalten sind.'
+  ],
+  wwwFeedback: {
+    perception: 'Konkrete Wahrnehmung ist vorhanden.',
+    effect: 'Die Wirkung wird knapp sichtbar.',
+    wish: 'Der Wunsch braucht mehr Klarheit.'
+  }
 }
 
 beforeEach(() => {
@@ -40,7 +48,7 @@ describe('SQLite-Persistenz', () => {
 
     expect(stored.persona.name).toBe('Mara Keller')
     expect(stored.messages.map((message) => message.role)).toEqual(['user', 'persona'])
-    expect(stored.summary?.recommendations).toContain('Simulationen klar als Ergänzung zu echten Interviews positionieren.')
+    expect(stored.summary?.exampleSentences).toContain('Ich wünsche mir, dass du spätestens am Vortag meldest, wenn ein Termin wackelt.')
   })
 
   it('listet gespeicherte Sessions mit der neuesten zuerst', () => {
@@ -61,7 +69,7 @@ describe('SQLite-Persistenz', () => {
     expect(sessions[0].personaName).toBe('Jonas Weber')
   })
 
-  it('speichert einen Chat-Zug mit optionalem Coach-Feedback zusammen', () => {
+  it('speichert einen Chat-Zug chronologisch', () => {
     const session = createSession({
       scenario: 'Ein Research-Tool für frühes Produktfeedback.',
       targetAudience: 'Produktteams in kleinen B2B-Softwarefirmen.',
@@ -71,19 +79,13 @@ describe('SQLite-Persistenz', () => {
     saveChatTurn({
       sessionId: session.id,
       userMessage: 'Wie reagierst du auf den Vorschlag?',
-      personaReply: 'Ich sehe den Nutzen, möchte aber zuerst klare Beispiele.',
-      coachFeedback: {
-        effect: 'Die Frage öffnet den Dialog.',
-        technique: 'Offene Frage',
-        improvement: 'Noch konkreter nach dem nächsten Schritt fragen.',
-        alternative: 'Was wäre für dich ein sinnvoller erster Test?'
-      }
+      personaReply: 'Ich sehe den Nutzen, möchte aber zuerst klare Beispiele.'
     })
 
     const stored = getSession(session.id)
 
     expect(stored.messages.map((message) => message.role)).toEqual(['user', 'persona'])
-    expect(stored.coachFeedback[0].userMessageId).toBe(stored.messages[0].id)
-    expect(stored.coachFeedback[0].alternative).toContain('sinnvoller erster Test')
+    expect(stored.messages[0].content).toContain('Wie reagierst du')
+    expect(stored.messages[1].content).toContain('klare Beispiele')
   })
 })

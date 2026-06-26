@@ -1,17 +1,13 @@
 <script setup lang="ts">
-import type { CoachFeedback, PersonaProfile, StoredSession } from '../types/persona'
+import type { StoredSession } from '../types/persona'
 import {
   buildTrainingContext,
   defaultScenario,
   defaultTargetAudience,
-  difficultyOptions,
-  focusOptions,
-  phraseLibrary,
-  scenarioPresets,
   simulationTemplates,
-  type ScenarioPreset,
   type SimulationTemplate
 } from './composables/useSimulationCatalog'
+import { getMoodBarometer } from './composables/useMoodBarometer'
 
 const scenario = ref(defaultScenario)
 const targetAudience = ref(defaultTargetAudience)
@@ -19,25 +15,18 @@ const trainingFocus = ref('Fokus halten')
 const difficulty = ref('mittel')
 const currentSession = ref<StoredSession | null>(null)
 const pending = ref(false)
-const coachPending = ref(false)
 const chatMessage = ref('')
 const errorMessage = ref('')
-const revisedAnswers = ref<Record<number, string>>({})
 
 const persona = computed(() => currentSession.value?.persona || null)
 const messages = computed(() => currentSession.value?.messages || [])
 const userMessageCount = computed(() => messages.value.filter((message) => message.role === 'user').length)
-const nextAutoFeedbackIn = computed(() => nextFeedbackCountdown(userMessageCount.value, Boolean(persona.value)))
-const coachFeedbackByMessageId = computed(() => {
-  return Object.fromEntries(
-    (currentSession.value?.coachFeedback || []).map((feedback) => [feedback.userMessageId, feedback])
-  ) as Record<number, CoachFeedback>
-})
+const mood = computed(() => getMoodBarometer(messages.value))
 const summary = computed(() => currentSession.value?.summary || null)
 const pendingLabel = computed(() => {
   if (!pending.value) return ''
-  if (!persona.value) return 'Das lokale Modell erzeugt eine neue Persona.'
-  return 'Die Persona antwortet kurz.'
+  if (!persona.value) return 'Das Feedbackgespräch wird vorbereitet.'
+  return 'Lukas antwortet kurz.'
 })
 
 function trainingContext(baseScenario: string, baseTargetAudience: string) {
@@ -49,38 +38,15 @@ function trainingContext(baseScenario: string, baseTargetAudience: string) {
   })
 }
 
-function applyScenarioPreset(preset: ScenarioPreset) {
-  scenario.value = preset.scenario
-  trainingFocus.value = preset.focus
-  errorMessage.value = ''
-}
-
 async function startSimulation() {
-  errorMessage.value = ''
-  pending.value = true
-  try {
-    const context = trainingContext(scenario.value, targetAudience.value)
-    const generatedPersona = await $fetch<PersonaProfile>('/api/personas/generate', {
-      method: 'POST',
-      body: {
-        scenario: context.scenario,
-        targetAudience: context.targetAudience
-      }
-    })
+  const template = simulationTemplates[0]
 
-    currentSession.value = await $fetch<StoredSession>('/api/sessions', {
-      method: 'POST',
-      body: {
-        scenario: context.scenario,
-        targetAudience: context.targetAudience,
-        persona: generatedPersona
-      }
-    })
-  } catch (error: any) {
-    errorMessage.value = error?.statusMessage || error?.message || 'Die Persona konnte nicht erzeugt werden.'
-  } finally {
-    pending.value = false
+  if (!template) {
+    errorMessage.value = 'Die Trainingsperson konnte nicht geladen werden.'
+    return
   }
+
+  await startTemplateSimulation(template)
 }
 
 async function startTemplateSimulation(template: SimulationTemplate) {
@@ -99,16 +65,15 @@ async function startTemplateSimulation(template: SimulationTemplate) {
     scenario.value = context.scenario
     targetAudience.value = context.targetAudience
     chatMessage.value = ''
-    revisedAnswers.value = {}
   } catch (error: any) {
-    errorMessage.value = error?.statusMessage || error?.message || 'Die Vorlage konnte nicht gestartet werden.'
+    errorMessage.value = error?.statusMessage || error?.message || 'Das Feedbackgespräch konnte nicht gestartet werden.'
   } finally {
     pending.value = false
   }
 }
 
 async function sendMessage() {
-  if (!currentSession.value || !chatMessage.value.trim()) return
+  if (!currentSession.value || summary.value || !chatMessage.value.trim()) return
 
   const message = chatMessage.value.trim()
   chatMessage.value = ''
@@ -122,39 +87,16 @@ async function sendMessage() {
         message
       }
     })
-    if (userMessageCount.value > 0 && userMessageCount.value % 10 === 0) {
-      void requestCoachFeedback({ silent: true })
-    }
   } catch (error: any) {
     chatMessage.value = message
-    errorMessage.value = error?.statusMessage || error?.message || 'Die Persona konnte nicht antworten.'
+    errorMessage.value = error?.statusMessage || error?.message || 'Lukas konnte nicht antworten.'
   } finally {
     pending.value = false
   }
 }
 
-async function requestCoachFeedback(options: { silent?: boolean } = {}) {
-  if (!currentSession.value || userMessageCount.value === 0 || coachPending.value) return
-
-  if (!options.silent) {
-    errorMessage.value = ''
-  }
-  coachPending.value = true
-  try {
-    currentSession.value = await $fetch<StoredSession>(`/api/sessions/${currentSession.value.id}/coach`, {
-      method: 'POST'
-    })
-  } catch (error: any) {
-    if (!options.silent) {
-      errorMessage.value = error?.statusMessage || error?.message || 'Das Coach-Feedback konnte nicht erzeugt werden.'
-    }
-  } finally {
-    coachPending.value = false
-  }
-}
-
 async function createSummary() {
-  if (!currentSession.value) return
+  if (!currentSession.value || userMessageCount.value === 0) return
 
   errorMessage.value = ''
   pending.value = true
@@ -173,7 +115,8 @@ function resetSimulation() {
   currentSession.value = null
   chatMessage.value = ''
   errorMessage.value = ''
-  revisedAnswers.value = {}
+  scenario.value = defaultScenario
+  targetAudience.value = defaultTargetAudience
 }
 </script>
 
@@ -189,24 +132,8 @@ function resetSimulation() {
       />
 
       <section id="main-content" class="main-panel">
-        <SimulationTrainingControls
-          v-model:training-focus="trainingFocus"
-          v-model:difficulty="difficulty"
-          :focus-options="focusOptions"
-          :difficulty-options="difficultyOptions"
-          :presets="scenarioPresets"
-          @select-preset="applyScenarioPreset"
-        />
-
-        <SimulationPersonaTemplates
-          :templates="simulationTemplates"
-          :pending="pending"
-          @start="startTemplateSimulation"
-        />
-
-        <SimulationSimulationSetup
+        <SimulationSetup
           v-model:scenario="scenario"
-          v-model:target-audience="targetAudience"
           :pending="pending"
           @start="startSimulation"
         />
@@ -224,21 +151,16 @@ function resetSimulation() {
 
           <SimulationChatPanel
             v-model:chat-message="chatMessage"
-            v-model:revised-answers="revisedAnswers"
             :persona="persona"
             :messages="messages"
-            :coach-feedback-by-message-id="coachFeedbackByMessageId"
+            :mood="mood"
             :pending="pending"
-            :coach-pending="coachPending"
             :user-message-count="userMessageCount"
-            :next-auto-feedback-in="nextAutoFeedbackIn"
+            :is-finished="Boolean(summary)"
             @send="sendMessage"
-            @request-coach-feedback="requestCoachFeedback"
             @create-summary="createSummary"
           />
         </section>
-
-        <SimulationPhraseLibrary :groups="phraseLibrary" />
 
         <SimulationSummaryPanel v-if="summary" :summary="summary" />
       </section>

@@ -1,5 +1,5 @@
-import { CoachFeedbackSchema, PersonaSchema, SummarySchema } from './schemas'
-import type { ChatMessage, CoachFeedback, PersonaProfile, SessionSummary } from '../../types/persona'
+import { SummarySchema } from './schemas'
+import type { ChatMessage, PersonaProfile, SessionSummary } from '../../types/persona'
 
 type OllamaMessage = {
   role: 'system' | 'user' | 'assistant'
@@ -107,32 +107,6 @@ function swissSolutionValue<T>(value: T): T {
   return value
 }
 
-export async function generatePersona(scenario: string, targetAudience: string): Promise<PersonaProfile> {
-  const content = await callOllama([
-    {
-      role: 'system',
-      content: [
-        'Du erzeugst realistische deutschsprachige Kunden- und Benutzerpersonas mit klarer Swissness.',
-        'Swissness bedeutet: schweizerisch-pragmatisch, zuverlässig, zurückhaltend, präzise, respektvoll, qualitätsbewusst und lösungsorientiert.',
-        'Halte alle Vorgaben aus der Zielgruppe strikt ein. Wenn Geschlecht, Alter, Herkunft, Weltanschauung oder beruflicher Kontext genannt sind, muss die Persona dazu passen.',
-        'Wenn die Zielgruppe z. B. männlich, weiss, über 50 und konservativ beschreibt, erzeuge eine männliche Persona über 50 mit entsprechend sachlich-konservativer Prägung.',
-        'Wähle einen in der Schweiz plausiblen Namen und einen schweizerisch passenden beruflichen oder privaten Kontext.',
-        'Formuliere in Schweizer Hochdeutsch: verwende ss statt ß und vermeide bundesdeutsche Zuspitzungen.',
-        'Vermeide problemfixierte oder dramatisierende Wörter wie Überforderung, überfordert, Chaos, Verwirrung, Krise, Angst, Scheitern oder Schmerz.',
-        'Beschreibe Spannungsfelder konstruktiv, etwa als Prioritäten, Abstimmungsbedarf, Klärungsbedarf, Aufwand, offene Punkte oder Verbesserungspotenzial.',
-        'Antworte ausschliesslich als valides JSON ohne Markdown.',
-        'Schema: {"name":string,"background":string,"motivation":string,"painPoints":string[],"decisionBehavior":string,"tone":string}'
-      ].join('\n')
-    },
-    {
-      role: 'user',
-      content: `Szenario:\n${scenario}\n\nZielgruppe:\n${targetAudience}\n\nErzeuge genau eine plausible Persona, die die Zielgruppe exakt erfüllt.`
-    }
-  ], { temperature: 0.55, numPredict: 320, numCtx: 2048, timeoutMs: 75000 })
-
-  return swissSolutionValue(PersonaSchema.parse(parseJsonFromModel(content)))
-}
-
 export async function generatePersonaReply(params: {
   scenario: string
   targetAudience: string
@@ -149,17 +123,20 @@ export async function generatePersonaReply(params: {
     {
       role: 'system',
       content: [
-        'Du bist eine simulierte Kunden-/Benutzerpersona und bleibst streng in dieser Rolle.',
-        'Du erwähnst nicht, dass du KI bist, und gibst keine Meta-Analyse im Chat.',
-        'Wenn in der Persona ein Muster, ein typischer Satz oder ein Übungsfeld beschrieben ist, zeige dieses Verhalten natürlich im Gespräch, ohne das Muster oder Übungsfeld zu benennen.',
-        'Bleibe trainingsrealistisch: herausfordernd genug zum Üben, aber nicht karikierend.',
-        'Antworte natürlich, konkret und aus der Ich-Perspektive der Persona.',
+        'Du bist Lukas Berger in einem geübten Feedbackgespräch und bleibst streng in dieser Rolle.',
+        'Du erwähnst nicht, dass du KI bist, und gibst keine Meta-Analyse, keine Tipps und kein Coach-Feedback im Chat.',
+        'Lukas ist 34 Jahre alt, seit vier Jahren im Team, fachlich stark und eigentlich geschätzt.',
+        'In den letzten Wochen hat Lukas zwei Deadlines gerissen und eine Übergabe schludrig gemacht, die Kolleginnen und Kollegen ausbaden mussten.',
+        'Zu Beginn bist du freundlich und zugewandt.',
+        'Sobald Kritik plump, pauschal oder vorwurfsvoll kommt, wirst du defensiv, weichst aus und rechtfertigst dich.',
+        'Typische Reaktionen bei Kritik: «die Vorgaben waren unklar», «ich war ja nicht allein daran», «das kam ziemlich kurzfristig».',
+        'Dein wunder Punkt: Du fühlst dich im Kern nicht genug wertgeschätzt.',
+        'Du öffnest dich nur, wenn die Führungskraft echte Anerkennung zeigt, konkrete Beobachtungen nennt und offene Fragen stellt.',
+        'Bleibe glaubwürdig und menschlich: nicht brav, nicht karikierend, nicht künstlich kooperativ.',
+        'Antworte natürlich, konkret und aus Lukas Sicht in der Ich-Perspektive.',
         'Halte deine Antwort sehr kurz: maximal 1 bis 2 Sätze, keine langen Erklärungen.',
         'Stelle höchstens eine kurze Rückfrage.',
-        'Dein Ton strahlt Swissness aus: ruhig, verbindlich, qualitätsbewusst, pragmatisch und lösungsorientiert.',
         'Schreibe in Schweizer Hochdeutsch mit ss statt ß.',
-        'Vermeide problemfixierte oder dramatisierende Wörter wie Überforderung, überfordert, Chaos, Verwirrung, Krise, Angst, Scheitern oder Schmerz.',
-        'Wenn du Bedenken äusserst, formuliere sie konstruktiv als Klärungsbedarf, offene Punkte, Prioritäten, Aufwand oder nächste sinnvolle Schritte.',
         `Szenario: ${params.scenario}`,
         `Zielgruppe: ${params.targetAudience}`,
         `Persona: ${JSON.stringify(params.persona)}`
@@ -172,48 +149,6 @@ export async function generatePersonaReply(params: {
   return swissSolutionText(reply)
 }
 
-export async function generateCoachFeedback(params: {
-  scenario: string
-  targetAudience: string
-  persona: PersonaProfile
-  messages: ChatMessage[]
-  userMessage: string
-}): Promise<Omit<CoachFeedback, 'id' | 'sessionId' | 'userMessageId' | 'createdAt'>> {
-  const transcript = params.messages
-    .map((message) => `${message.role === 'user' ? 'Trainierende Person' : params.persona.name}: ${message.content}`)
-    .join('\n')
-
-  const content = await callOllama([
-    {
-      role: 'system',
-      content: [
-        'Du bist ein Trainingscoach für Interventionstechniken in Mitarbeitendengesprächen.',
-        'Gib präzises, kurzes Feedback zur letzten Antwort der trainierenden Person.',
-        'Bewerte Wirkung, erkannte Interventionstechnik, konkreten Verbesserungspunkt und eine bessere alternative Formulierung.',
-        'Schreibe in Schweizer Hochdeutsch mit ss statt ß.',
-        'Bleibe ruhig, konstruktiv, direkt und lösungsorientiert.',
-        'Keine Meta-Erklärungen, keine Theorieblöcke, keine langen Listen.',
-        'Vermeide problemfixierte oder dramatisierende Wörter wie Überforderung, überfordert, Chaos, Verwirrung, Krise, Angst, Scheitern oder Schmerz.',
-        'Antworte ausschliesslich als valides JSON ohne Markdown.',
-        'Schema: {"effect":string,"technique":string,"improvement":string,"alternative":string}'
-      ].join('\n')
-    },
-    {
-      role: 'user',
-      content: [
-        `Szenario: ${params.scenario}`,
-        `Zielgruppe: ${params.targetAudience}`,
-        `Persona: ${JSON.stringify(params.persona)}`,
-        `Bisheriger Dialog:\n${transcript}`,
-        `Letzte Antwort der trainierenden Person:\n${params.userMessage}`,
-        'Erstelle ein kompaktes Coach-Feedback. Alternative als direkt nutzbaren Satz formulieren.'
-      ].join('\n\n')
-    }
-  ], { temperature: 0.35, numPredict: 220, numCtx: 2048, timeoutMs: 75000 })
-
-  return swissSolutionValue(CoachFeedbackSchema.parse(parseJsonFromModel(content)))
-}
-
 export async function generateSummary(params: {
   scenario: string
   targetAudience: string
@@ -221,20 +156,25 @@ export async function generateSummary(params: {
   messages: ChatMessage[]
 }): Promise<SessionSummary> {
   const transcript = params.messages
-    .map((message) => `${message.role === 'user' ? 'Fragende Person' : params.persona.name}: ${message.content}`)
+    .map((message) => `${message.role === 'user' ? 'Führungskraft' : 'Lukas'}: ${message.content}`)
     .join('\n')
 
   const content = await callOllama([
     {
       role: 'system',
       content: [
-        'Du analysierst eine deutschsprachige Persona-Simulation.',
-        'Die Auswertung soll Swissness ausstrahlen: sachlich, präzise, ruhig, verbindlich und lösungsorientiert.',
+        'Du bist ein erfahrener, wohlwollender Kommunikations-Coach.',
+        'Dir wird das Transkript eines geübten Feedbackgesprächs gegeben: Führungskraft = Nutzer, Lukas = KI.',
+        'Bewerte ausschliesslich die Führungskraft, nicht Lukas.',
+        'Nutze das WWW-Modell als Massstab:',
+        'Wahrnehmung: Wurde konkret beobachtet statt bewertet?',
+        'Wirkung: Wurde die eigene Wirkung oder die Wirkung aufs Team benannt?',
+        'Wunsch: Gab es einen klaren, machbaren Wunsch?',
+        'Gib kurz, ehrlich und ermutigend Feedback.',
         'Schreibe in Schweizer Hochdeutsch mit ss statt ß.',
-        'Vermeide problemfixierte oder dramatisierende Wörter wie Überforderung, überfordert, Chaos, Verwirrung, Krise, Angst, Scheitern oder Schmerz.',
-        'Formuliere Einwände als konstruktive Klärungspunkte, Voraussetzungen, Prioritäten oder nächste Schritte.',
+        'Maximal 200 Wörter insgesamt.',
         'Antworte ausschliesslich als valides JSON ohne Markdown.',
-        'Schema: {"insights":string[],"needs":string[],"objections":string[],"patterns":string[],"recommendations":string[],"teamLearning":string[],"practiceSentences":string[]}'
+        'Schema: {"strength":string,"strengthQuote":string,"improvement":string,"improvementQuote":string,"exampleSentences":[string,string],"wwwFeedback":{"perception":string,"effect":string,"wish":string}}'
       ].join('\n')
     },
     {
@@ -244,12 +184,15 @@ export async function generateSummary(params: {
         `Zielgruppe: ${params.targetAudience}`,
         `Persona: ${JSON.stringify(params.persona)}`,
         `Dialog:\n${transcript}`,
-        'Erstelle eine kompakte, lösungsorientierte Auswertung mit schweizerisch-sachlicher Tonalität.',
-        'teamLearning beschreibt, was das Team künftig besser trainieren sollte.',
-        'practiceSentences enthält direkt nutzbare Interventionssätze für den nächsten Durchlauf.'
+        'Erstelle das Abschluss-Coaching.',
+        'strength: eine konkrete Stärke der Führungskraft.',
+        'strengthQuote: ein kurzes Zitat aus dem Gespräch, das die Stärke zeigt.',
+        'improvement: der wichtigste Verbesserungspunkt.',
+        'improvementQuote: ein kurzes Zitat aus dem Gespräch, an dem man den Punkt sieht.',
+        'exampleSentences: genau zwei umformulierte Beispielsätze, die es besser machen.'
       ].join('\n\n')
     }
-  ], { temperature: 0.45, numPredict: 520, timeoutMs: 90000 })
+  ], { temperature: 0.35, numPredict: 360, timeoutMs: 90000 })
 
   return swissSolutionValue(SummarySchema.parse(parseJsonFromModel(content)))
 }

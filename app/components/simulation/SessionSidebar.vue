@@ -15,17 +15,17 @@ const emit = defineEmits<{
 <template>
   <aside class="sidebar">
     <div>
-      <p class="eyebrow">Lokaler Agent</p>
-      <h1>Swiss Persona Simulation</h1>
+      <p class="eyebrow">Lokaler Trainingspartner</p>
+      <h1>Feedbackgespräch üben</h1>
     </div>
 
     <button class="secondary full-width" @click="emit('reset')">
-      Neue Simulation
+      Neu starten
     </button>
 
     <div class="history">
       <div class="history-heading">
-        <h2>Personas</h2>
+        <h2>Trainingsperson</h2>
         <span>{{ personas.length }}</span>
       </div>
       <button

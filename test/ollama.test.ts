@@ -1,5 +1,5 @@
 import { beforeEach, describe, expect, it, vi } from 'vitest'
-import { generatePersona, generatePersonaReply, generateSummary } from '../server/lib/ollama'
+import { generatePersonaReply, generateSummary } from '../server/lib/ollama'
 import type { ChatMessage, PersonaProfile } from '../types/persona'
 
 const persona: PersonaProfile = {
@@ -20,27 +20,6 @@ beforeEach(() => {
 })
 
 describe('Ollama-Client', () => {
-  it('parst eine strukturierte Persona aus einer Modellantwort', async () => {
-    vi.stubGlobal('fetch', vi.fn(async () => ({
-      ok: true,
-      json: async () => ({
-        message: {
-          content: JSON.stringify({
-            ...persona,
-            painPoints: ['Ich bin oft überfordert von Konflikten im Team', 'Ich brauche mehr Struktur.']
-          })
-        }
-      })
-    })))
-
-    const result = await generatePersona('Ein Research-Tool soll getestet werden.', 'B2B-Produktteams')
-
-    expect(result.name).toBe('Mara Keller')
-    expect(result.painPoints.length).toBeGreaterThan(0)
-    expect(result.painPoints.join(' ')).not.toContain('überfordert')
-    expect(result.painPoints.join(' ')).toContain('Klärungsbedarf')
-  })
-
   it('fragt die Persona streng in Rolle an', async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,
@@ -65,10 +44,10 @@ describe('Ollama-Client', () => {
     })
 
     const body = JSON.parse(fetchMock.mock.calls[0][1].body)
-    expect(body.messages[0].content).toContain('bleibst streng in dieser Rolle')
-    expect(body.messages[0].content).toContain('Swissness')
-    expect(body.messages[0].content).toContain('lösungsorientiert')
-    expect(body.messages[0].content).toContain('Überforderung')
+    expect(body.messages[0].content).toContain('Du bist Lukas Berger')
+    expect(body.messages[0].content).toContain('keine Meta-Analyse')
+    expect(body.messages[0].content).toContain('fühlst dich im Kern nicht genug wertgeschätzt')
+    expect(body.messages[0].content).toContain('offene Fragen')
     expect(body.keep_alive).toBe('10m')
     expect(body.options.num_ctx).toBe(2048)
     expect(body.options.num_predict).toBe(80)
@@ -108,34 +87,25 @@ describe('Ollama-Client', () => {
     expect(sentContents).toContain('Nachricht 12')
   })
 
-  it('fordert Swissness und konstruktive Persona-Generierung an', async () => {
-    const fetchMock = vi.fn(async () => ({
-      ok: true,
-      json: async () => ({ message: { content: JSON.stringify(persona) } })
-    }))
-    vi.stubGlobal('fetch', fetchMock)
-
-    await generatePersona('Ein Research-Tool soll getestet werden.', 'Schweizer B2B-Produktteams')
-
-    const body = JSON.parse(fetchMock.mock.calls[0][1].body)
-    expect(body.messages[0].content).toContain('Swissness')
-    expect(body.messages[0].content).toContain('Schweizer Hochdeutsch')
-    expect(body.messages[0].content).toContain('Verbesserungspotenzial')
-    expect(body.messages[0].content).toContain('Zielgruppe strikt ein')
-    expect(body.messages[1].content).toContain('exakt erfüllt')
-  })
-
   it('parst eine strukturierte Zusammenfassung', async () => {
     vi.stubGlobal('fetch', vi.fn(async () => ({
       ok: true,
       json: async () => ({
         message: {
           content: JSON.stringify({
-            insights: ['Schnelligkeit ist zentral.'],
-            needs: ['Nachvollziehbare Simulationen.'],
-            objections: ['Zu wenig Vertrauen in synthetisches Feedback.'],
-            patterns: ['Pragmatische Bewertung.'],
-            recommendations: ['Als Ergänzung zu Interviews positionieren.']
+            strength: 'Du hast konkret beschrieben, worum es geht.',
+            strengthQuote: 'Mir ist aufgefallen, dass zwei Termine nicht gehalten wurden.',
+            improvement: 'Der Wunsch könnte noch machbarer formuliert werden.',
+            improvementQuote: 'Das muss besser werden.',
+            exampleSentences: [
+              'Ich wünsche mir, dass du spätestens am Vortag meldest, wenn ein Termin wackelt.',
+              'Lass uns vereinbaren, welche Informationen in der Übergabe zwingend enthalten sind.'
+            ],
+            wwwFeedback: {
+              perception: 'Die Wahrnehmung war teilweise konkret.',
+              effect: 'Die Wirkung wurde erkennbar benannt.',
+              wish: 'Der Wunsch braucht mehr Klarheit.'
+            }
           })
         }
       })
@@ -148,20 +118,29 @@ describe('Ollama-Client', () => {
       messages: []
     })
 
-    expect(result.needs).toContain('Nachvollziehbare Simulationen.')
+    expect(result.strength).toContain('konkret')
+    expect(result.exampleSentences).toHaveLength(2)
   })
 
-  it('fordert eine schweizerisch-sachliche Auswertung an', async () => {
+  it('fordert ein getrenntes WWW-Abschlusscoaching an', async () => {
     const fetchMock = vi.fn(async () => ({
       ok: true,
       json: async () => ({
         message: {
           content: JSON.stringify({
-            insights: ['Schnelligkeit ist zentral.'],
-            needs: ['Nachvollziehbare Simulationen.'],
-            objections: ['Konkrete Beispiele schaffen Vertrauen.'],
-            patterns: ['Pragmatische Bewertung.'],
-            recommendations: ['Als Ergänzung zu Interviews positionieren.']
+            strength: 'Guter Einstieg.',
+            strengthQuote: 'Ich schätze deine Arbeit.',
+            improvement: 'Konkreter Wunsch fehlt.',
+            improvementQuote: 'Mach es einfach besser.',
+            exampleSentences: [
+              'Bitte melde dich künftig spätestens am Vortag.',
+              'Ich wünsche mir eine Übergabe mit den drei offenen Punkten.'
+            ],
+            wwwFeedback: {
+              perception: 'Teilweise konkret.',
+              effect: 'Wirkung knapp benannt.',
+              wish: 'Noch zu allgemein.'
+            }
           })
         }
       })
@@ -176,8 +155,9 @@ describe('Ollama-Client', () => {
     })
 
     const body = JSON.parse(fetchMock.mock.calls[0][1].body)
-    expect(body.messages[0].content).toContain('Swissness')
-    expect(body.messages[0].content).toContain('Klärungspunkte')
-    expect(body.messages[1].content).toContain('schweizerisch-sachlicher Tonalität')
+    expect(body.messages[0].content).toContain('Kommunikations-Coach')
+    expect(body.messages[0].content).toContain('Bewerte ausschliesslich die Führungskraft')
+    expect(body.messages[0].content).toContain('WWW-Modell')
+    expect(body.messages[1].content).toContain('Abschluss-Coaching')
   })
 })

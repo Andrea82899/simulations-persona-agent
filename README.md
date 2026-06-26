@@ -1,29 +1,27 @@
-# Simulations-Persona-Agent
+# KI-Trainingspartner fuer Feedbackgespraeche
 
-Lokale Nuxt-App fuer Trainingssimulationen mit Persona-Chat, Coach-Feedback und Team-Auswertung. Die App nutzt Ollama lokal als Modell-Service und speichert Sessions in SQLite.
+Lokale Nuxt-App zum Ueben schwieriger Feedbackgespraeche mit einer konsistenten KI-Persona und einem getrennten Abschluss-Coach. Die App nutzt Ollama lokal als Modell-Service und speichert Sessions in SQLite.
 
 ## Wofuer ist das?
 
-Das Tool hilft Teams, anspruchsvolle Gespraechssituationen zu trainieren:
+Das Tool hilft Fuehrungskraeften, schwierige Feedback- und Kritikgespraeche zu trainieren:
 
-- Interventionstechniken in Mitarbeitendengespraechen
-- Reframing, Grenzen setzen und Fokus halten
-- Stille aushalten und Kontakt herstellen
-- Emotionen anerkennen, ohne das Thema zu verlieren
-- Team-Auswertung mit konkreten Uebungssaetzen
+- Feedback geben, ohne Beziehungen im echten Alltag zu riskieren
+- Konkrete Beobachtung, Wirkung und Wunsch nach dem WWW-Modell formulieren
+- Defensivitaet auffangen und mit Wertschätzung sowie offenen Fragen arbeiten
+- Ein Gespraech mehrfach wiederholen und die eigene Wirkung verbessern
 
 Die App laeuft lokal. Standardmaessig werden keine Daten an Cloud-Dienste gesendet.
 
 ## Funktionen
 
-- Drei feste Simulationspersonas: Hansueli, Dr. Susanne Moser und Bernd
-- Trainingsfokus und Schwierigkeitsgrad
-- Trainingskarten fuer Meeting, Feedback, Widerstand, Stille, Konflikt, Verbindlichkeit und Entscheidung
-- Freier Persona-Chat
-- Coach-Feedback automatisch nach 10 Interaktionen oder jederzeit auf Nachfrage
-- Feld zum Ueben einer verbesserten Antwort
-- Formulierungsbibliothek
-- SQLite-Speicherung von Sessions, Chatverlauf, Feedback und Zusammenfassungen
+- Feste Trainingsperson: Lukas Berger, fachlich stark, aber zuletzt mit gerissenen Deadlines und schwacher Uebergabe
+- Kurze Szenario-Beschreibung als Startpunkt
+- Freier Chat mit Lukas, der bei Kritik defensiv reagiert und sich bei echter Wertschätzung oeffnet
+- Stimmungsbarometer von verschlossen bis offen
+- Abschluss-Coaching nach dem WWW-Modell
+- Konkrete Staerke, wichtigster Verbesserungspunkt und zwei bessere Beispielsätze
+- SQLite-Speicherung von Sessions, Chatverlauf und Abschluss-Coachings
 
 ## Voraussetzungen
 
@@ -106,7 +104,6 @@ types/               Gemeinsame TypeScript-Typen
 
 ## API
 
-- `POST /api/personas/generate`
 - `POST /api/sessions`
 - `GET /api/sessions`
 - `GET /api/sessions/:id`

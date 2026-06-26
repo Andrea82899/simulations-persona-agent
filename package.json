@@ -1,7 +1,7 @@
 {
   "name": "simulations-persona-agent",
   "version": "1.0.0",
-  "description": "Lokaler Simulations-Persona-Agent mit Nuxt, Ollama und SQLite.",
+  "description": "Lokaler KI-Trainingspartner fuer Feedbackgespraeche mit Nuxt, Ollama und SQLite.",
   "type": "module",
   "scripts": {
     "dev": "NUXT_TELEMETRY_DISABLED=1 nuxt dev",
@@ -16,10 +16,10 @@
     "nuxt",
     "ollama",
     "sqlite",
-    "persona",
+    "feedback",
     "simulation",
     "leadership-training",
-    "interventionstechniken"
+    "www-modell"
   ],
   "author": "Andrea Koch",
   "license": "MIT",

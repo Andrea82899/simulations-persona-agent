@@ -10,20 +10,16 @@ export const PersonaSchema = z.object({
 })
 
 export const SummarySchema = z.object({
-  insights: z.array(z.string().min(1)).min(1),
-  needs: z.array(z.string().min(1)).min(1),
-  objections: z.array(z.string().min(1)).min(1),
-  patterns: z.array(z.string().min(1)).min(1),
-  recommendations: z.array(z.string().min(1)).min(1),
-  teamLearning: z.array(z.string().min(1)).optional(),
-  practiceSentences: z.array(z.string().min(1)).optional()
-})
-
-export const CoachFeedbackSchema = z.object({
-  effect: z.string().min(1),
-  technique: z.string().min(1),
+  strength: z.string().min(1),
+  strengthQuote: z.string().min(1),
   improvement: z.string().min(1),
-  alternative: z.string().min(1)
+  improvementQuote: z.string().min(1),
+  exampleSentences: z.array(z.string().min(1)).length(2),
+  wwwFeedback: z.object({
+    perception: z.string().min(1),
+    effect: z.string().min(1),
+    wish: z.string().min(1)
+  })
 })
 
 export const PersonaInputSchema = z.object({
@@ -37,6 +33,5 @@ export const SessionCreateSchema = PersonaInputSchema.extend({
 
 export const ChatInputSchema = z.object({
   sessionId: z.number().int().positive(),
-  message: z.string().min(1),
-  requestCoach: z.boolean().optional()
+  message: z.string().min(1)
 })

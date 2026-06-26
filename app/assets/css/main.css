@@ -210,117 +210,9 @@ h3 {
   padding: 20px;
 }
 
-.training-controls {
-  margin-bottom: 22px;
-  padding-bottom: 18px;
-  border-bottom: 1px solid var(--line);
-}
-
-.control-grid {
-  display: grid;
-  grid-template-columns: repeat(2, minmax(0, 260px));
-  gap: 12px;
-  margin-bottom: 12px;
-}
-
-.preset-grid {
-  display: grid;
-  grid-template-columns: repeat(5, minmax(0, 1fr));
-  gap: 8px;
-}
-
-.preset-card {
-  display: grid;
-  gap: 6px;
-  min-height: 112px;
-  padding: 12px;
-  text-align: left;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-  color: var(--ink);
-}
-
-.preset-card strong {
-  font-size: 0.95rem;
-  font-weight: 800;
-}
-
-.preset-card span {
-  color: var(--accent);
-  font-size: 0.82rem;
-  font-weight: 800;
-}
-
-.preset-card small {
-  color: var(--muted);
-  line-height: 1.35;
-}
-
-.template-section {
-  margin-bottom: 22px;
-}
-
-.template-grid {
-  display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.template-card {
-  display: grid;
-  grid-template-rows: auto auto 1fr auto;
-  gap: 14px;
-  min-height: 360px;
-  padding: 14px;
-  background: var(--panel-2);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-.template-card h3 {
-  margin-bottom: 8px;
-}
-
-.template-card p {
-  color: var(--muted);
-  line-height: 1.45;
-}
-
-.template-meta {
-  display: grid;
-  gap: 6px;
-}
-
-.template-meta span,
-.template-meta small {
-  display: block;
-}
-
-.template-meta span {
-  color: var(--ink);
-  font-weight: 800;
-}
-
-.template-meta small {
-  color: var(--muted);
-  line-height: 1.4;
-}
-
-.template-learning {
-  display: grid;
-  gap: 10px;
-  margin: 0;
-}
-
-.template-learning dd {
-  color: var(--ink);
-  line-height: 1.4;
-}
-
 .setup {
   display: grid;
-  grid-template-columns: minmax(0, 1fr) minmax(0, 1fr) auto;
+  grid-template-columns: minmax(0, 1fr) auto;
   gap: 14px;
   align-items: end;
 }
@@ -436,7 +328,7 @@ dd {
 .chat-panel {
   min-height: 620px;
   display: grid;
-  grid-template-rows: auto minmax(260px, 1fr) auto;
+  grid-template-rows: auto auto minmax(260px, 1fr) auto;
   gap: 16px;
 }
 
@@ -459,6 +351,57 @@ dd {
   margin-bottom: 0;
   font-size: 0.88rem;
   line-height: 1.45;
+}
+
+.mood-panel {
+  display: grid;
+  gap: 8px;
+  padding: 12px;
+  background: var(--soft);
+  border: 1px solid #bdd9d4;
+  border-radius: 8px;
+}
+
+.mood-copy {
+  display: grid;
+  grid-template-columns: auto auto minmax(0, 1fr);
+  gap: 8px;
+  align-items: baseline;
+}
+
+.mood-copy span,
+.mood-scale {
+  color: var(--muted);
+  font-size: 0.8rem;
+  font-weight: 800;
+}
+
+.mood-copy strong {
+  color: var(--accent);
+}
+
+.mood-copy small {
+  color: var(--muted);
+  line-height: 1.35;
+}
+
+.mood-track {
+  height: 12px;
+  overflow: hidden;
+  background: #d7dfdc;
+  border-radius: 999px;
+}
+
+.mood-fill {
+  height: 100%;
+  background: linear-gradient(90deg, var(--accent-2), #c7a747 48%, var(--accent));
+  border-radius: inherit;
+  transition: width 180ms ease-out;
+}
+
+.mood-scale {
+  display: flex;
+  justify-content: space-between;
 }
 
 .messages {
@@ -548,26 +491,6 @@ dd {
   gap: 10px;
 }
 
-.phrase-library {
-  margin-top: 20px;
-  padding: 18px;
-  background: var(--panel);
-  border: 1px solid var(--line);
-  border-radius: 8px;
-}
-
-.phrase-grid {
-  display: grid;
-  grid-template-columns: repeat(4, minmax(0, 1fr));
-  gap: 12px;
-}
-
-.phrase-grid article {
-  padding: 14px;
-  background: var(--panel-2);
-  border-radius: 8px;
-}
-
 .summary {
   margin-top: 20px;
 }
@@ -582,6 +505,19 @@ dd {
   background: var(--panel-2);
   border-radius: 8px;
   padding: 14px;
+}
+
+.summary p {
+  color: var(--ink);
+  line-height: 1.5;
+}
+
+blockquote {
+  margin: 12px 0 0;
+  padding-left: 12px;
+  color: var(--muted);
+  border-left: 3px solid var(--accent);
+  line-height: 1.5;
 }
 
 ul {
@@ -601,10 +537,6 @@ li + li {
   .workspace,
   .persona-grid,
   .setup,
-  .control-grid,
-  .preset-grid,
-  .template-grid,
-  .phrase-grid,
   .summary-grid {
     grid-template-columns: 1fr;
   }
@@ -617,6 +549,10 @@ li + li {
 @media (max-width: 640px) {
   .shell {
     padding: 12px;
+  }
+
+  .mood-copy {
+    grid-template-columns: 1fr;
   }
 
   .main-panel,
